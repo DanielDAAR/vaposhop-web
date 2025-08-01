@@ -1,50 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Administrador</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Administración</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form, .producto {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: 20px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    input, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    input[type="file"] {
+      background: white;
+    }
+    button {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    .producto img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .acciones {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .acciones button {
+      flex: 1;
+    }
+  </style>
 </head>
-<body style="background: #111; color: white; font-family: Arial; padding: 20px;">
-  <h1>Agregar nuevo producto</h1>
+<body>
 
-  <input id="nombre" placeholder="Nombre" style="padding: 8px;" /><br><br>
-  <input id="precio" placeholder="Precio" style="padding: 8px;" /><br><br>
-  <input id="imagen" placeholder="Ruta de imagen (img/vape1.png)" style="padding: 8px;" /><br><br>
+<h1>Panel de Administración</h1>
 
-  <button onclick="agregarProducto()" style="padding: 10px 20px;">Agregar</button>
+<form id="formulario">
+  <input type="text" id="nombre" placeholder="Nombre del producto" required />
+  <input type="text" id="precio" placeholder="Precio" required />
+  <textarea id="descripcion" rows="3" placeholder="Descripción (opcional)"></textarea>
+  <input type="file" id="imagen" accept="image/*" required />
+  <img id="preview" class="preview" style="display:none;" />
+  <button type="submit">Guardar producto</button>
+</form>
 
-  <h2>Productos actuales</h2>
-  <ul id="lista"></ul>
+<div id="lista-productos"></div>
 
-  <script>
-    if (localStorage.getItem("admin") !== "true") {
-      window.location.href = "login.html";
+<script>
+  let productos = JSON.parse(localStorage.getItem("productos")) || [];
+  let modoEdicion = false;
+  let productoEditando = null;
+
+  const formulario = document.getElementById("formulario");
+  const nombreInput = document.getElementById("nombre");
+  const precioInput = document.getElementById("precio");
+  const descripcionInput = document.getElementById("descripcion");
+  const imagenInput = document.getElementById("imagen");
+  const preview = document.getElementById("preview");
+  const lista = document.getElementById("lista-productos");
+
+  imagenInput.addEventListener("change", function () {
+    const file = imagenInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+        preview.dataset.imagen = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  formulario.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const nombre = nombreInput.value.trim();
+    const precio = precioInput.value.trim();
+    const descripcion = descripcionInput.value.trim();
+    const imagen = preview.dataset.imagen;
+
+    if (!nombre || !precio || !imagen) {
+      alert("Faltan datos");
+      return;
     }
 
-    const lista = document.getElementById("lista");
+    const producto = { nombre, precio, descripcion, imagen };
 
-    function renderProductos() {
-      lista.innerHTML = "";
-      const productos = JSON.parse(localStorage.getItem("productos")) || [];
-      productos.forEach((p, i) => {
-        lista.innerHTML += `<li>#${i+1} - ${p.nombre} (${p.precio})</li>`;
-      });
+    if (modoEdicion && productoEditando !== null) {
+      productos[productoEditando] = producto;
+      modoEdicion = false;
+      productoEditando = null;
+    } else {
+      productos.push(producto);
     }
 
-    function agregarProducto() {
-      const nombre = document.getElementById("nombre").value;
-      const precio = document.getElementById("precio").value;
-      const imagen = document.getElementById("imagen").value;
+    localStorage.setItem("productos", JSON.stringify(productos));
+    formulario.reset();
+    preview.style.display = "none";
+    renderizar();
+  });
 
-      const nuevo = { nombre, precio, imagen };
-
-      const productos = JSON.parse(localStorage.getItem("productos")) || [];
-      productos.push(nuevo);
+  function eliminarProducto(index) {
+    if (confirm("¿Eliminar este producto?")) {
+      productos.splice(index, 1);
       localStorage.setItem("productos", JSON.stringify(productos));
-      renderProductos();
+      renderizar();
     }
+  }
 
-    renderProductos();
-  </script>
+  function editarProducto(index) {
+    const p = productos[index];
+    nombreInput.value = p.nombre;
+    precioInput.value = p.precio;
+    descripcionInput.value = p.descripcion || "";
+    preview.src = p.imagen;
+    preview.style.display = "block";
+    preview.dataset.imagen = p.imagen;
+
+    modoEdicion = true;
+    productoEditando = index;
+  }
+
+  function renderizar() {
+    lista.innerHTML = "";
+    productos.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.className = "producto";
+      card.innerHTML = `
+        <img src="${p.imagen}" alt="${p.nombre}" />
+        <h3>${p.nombre}</h3>
+        <p style="color:#25D366; font-weight: bold;">${p.precio}</p>
+        <p>${p.descripcion || ""}</p>
+        <div class="acciones">
+          <button onclick="editarProducto(${i})">Editar</button>
+          <button style="background:crimson" onclick="eliminarProducto(${i})">Eliminar</button>
+        </div>
+      `;
+      lista.appendChild(card);
+    });
+  }
+
+  renderizar();
+</script>
+
 </body>
 </html>
