@@ -7,11 +7,11 @@ const productos = [
   {
     nombre: "Smok Mini Pro",
     precio: "$599",
-    imagen: "https://via.placeholder.com/200x200?text=Smok+Mini"
+    imagen: "img/vape2.png"
   },
   {
     nombre: "Sky Vape 9000",
     precio: "$899",
-    imagen: "https://via.placeholder.com/200x200?text=Sky+Vape+9000"
+    imagen: "img/vape3.png "
   }
 ];
