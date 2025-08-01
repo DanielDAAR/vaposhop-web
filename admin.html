@@ -2,174 +2,173 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel de Administración</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin VapeDealer</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      padding: 20px;
+      background: #111; color: white; font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
     }
-    h1 {
+    h2 {
       text-align: center;
     }
-    form, .producto {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 500px;
-      margin: 20px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    #formProducto {
+      background: #1e1e1e; padding: 20px; border-radius: 12px;
+      max-width: 500px; margin: 0 auto 20px auto;
     }
-    input, textarea {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-    }
-    input[type="file"] {
-      background: white;
+    input, textarea, button {
+      width: 100%; margin: 8px 0; padding: 10px; border-radius: 6px; border: none;
     }
     button {
-      background: #25D366;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
+      background: #25D366; color: white; font-weight: bold; cursor: pointer;
     }
-    .preview {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 8px;
+    #listaProductos {
+      max-width: 700px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
     }
-    .producto img {
-      width: 100%;
-      border-radius: 8px;
+    .productoCard {
+      background: #1e1e1e; border-radius: 12px; padding: 16px;
+      width: 220px; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      position: relative;
     }
-    .acciones {
-      margin-top: 10px;
-      display: flex;
-      gap: 10px;
+    .productoCard img {
+      width: 100%; border-radius: 8px;
     }
-    .acciones button {
-      flex: 1;
+    .btnEliminar {
+      position: absolute; top: 8px; right: 8px;
+      background: crimson; border: none; color: white;
+      padding: 4px 8px; border-radius: 6px; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<h1>Panel de Administración</h1>
+<h2>Panel de Administración</h2>
 
-<form id="formulario">
+<form id="formProducto">
   <input type="text" id="nombre" placeholder="Nombre del producto" required />
-  <input type="text" id="precio" placeholder="Precio" required />
-  <textarea id="descripcion" rows="3" placeholder="Descripción (opcional)"></textarea>
-  <input type="file" id="imagen" accept="image/*" required />
-  <img id="preview" class="preview" style="display:none;" />
-  <button type="submit">Guardar producto</button>
+  <input type="text" id="precio" placeholder="Precio (ej. $1200)" required />
+  <input type="text" id="imagen" placeholder="URL de la imagen" required />
+  <textarea id="descripcion" placeholder="Descripción corta" rows="3"></textarea>
+  <button type="submit">Agregar / Modificar Producto</button>
 </form>
 
-<div id="lista-productos"></div>
+<div id="listaProductos"></div>
 
+<button id="btnSalir" style="background:#ff4444; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; display:block; margin: 20px auto;">
+  Cerrar sesión
+</button>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-  let productos = JSON.parse(localStorage.getItem("productos")) || [];
-  let modoEdicion = false;
-  let productoEditando = null;
+  const firebaseConfig = {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_PROYECTO.firebaseapp.com",
+    projectId: "TU_PROYECTO",
+    storageBucket: "TU_PROYECTO.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  const formulario = document.getElementById("formulario");
-  const nombreInput = document.getElementById("nombre");
-  const precioInput = document.getElementById("precio");
-  const descripcionInput = document.getElementById("descripcion");
-  const imagenInput = document.getElementById("imagen");
-  const preview = document.getElementById("preview");
-  const lista = document.getElementById("lista-productos");
-
-  imagenInput.addEventListener("change", function () {
-    const file = imagenInput.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        preview.src = e.target.result;
-        preview.style.display = "block";
-        preview.dataset.imagen = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  formulario.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const nombre = nombreInput.value.trim();
-    const precio = precioInput.value.trim();
-    const descripcion = descripcionInput.value.trim();
-    const imagen = preview.dataset.imagen;
-
-    if (!nombre || !precio || !imagen) {
-      alert("Faltan datos");
-      return;
-    }
-
-    const producto = { nombre, precio, descripcion, imagen };
-
-    if (modoEdicion && productoEditando !== null) {
-      productos[productoEditando] = producto;
-      modoEdicion = false;
-      productoEditando = null;
+  // Verificar usuario autenticado
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "login.html";
     } else {
-      productos.push(producto);
+      cargarProductos();
     }
-
-    localStorage.setItem("productos", JSON.stringify(productos));
-    formulario.reset();
-    preview.style.display = "none";
-    renderizar();
   });
 
-  function eliminarProducto(index) {
-    if (confirm("¿Eliminar este producto?")) {
-      productos.splice(index, 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
-      renderizar();
-    }
-  }
+  const formProducto = document.getElementById("formProducto");
+  const listaProductos = document.getElementById("listaProductos");
 
-  function editarProducto(index) {
-    const p = productos[index];
-    nombreInput.value = p.nombre;
-    precioInput.value = p.precio;
-    descripcionInput.value = p.descripcion || "";
-    preview.src = p.imagen;
-    preview.style.display = "block";
-    preview.dataset.imagen = p.imagen;
+  let editId = null;
 
-    modoEdicion = true;
-    productoEditando = index;
-  }
-
-  function renderizar() {
-    lista.innerHTML = "";
-    productos.forEach((p, i) => {
-      const card = document.createElement("div");
-      card.className = "producto";
-      card.innerHTML = `
-        <img src="${p.imagen}" alt="${p.nombre}" />
-        <h3>${p.nombre}</h3>
-        <p style="color:#25D366; font-weight: bold;">${p.precio}</p>
-        <p>${p.descripcion || ""}</p>
-        <div class="acciones">
-          <button onclick="editarProducto(${i})">Editar</button>
-          <button style="background:crimson" onclick="eliminarProducto(${i})">Eliminar</button>
-        </div>
-      `;
-      lista.appendChild(card);
+  // Función para cargar productos desde Firestore
+  function cargarProductos() {
+    db.collection("productos").onSnapshot((snapshot) => {
+      listaProductos.innerHTML = "";
+      snapshot.forEach(doc => {
+        const p = doc.data();
+        p.id = doc.id;
+        mostrarProducto(p);
+      });
     });
   }
 
-  renderizar();
+  // Mostrar producto en pantalla
+  function mostrarProducto(producto) {
+    const div = document.createElement("div");
+    div.className = "productoCard";
+    div.innerHTML = `
+      <button class="btnEliminar" onclick="eliminarProducto('${producto.id}')">X</button>
+      <img src="${producto.imagen}" alt="${producto.nombre}">
+      <h3>${producto.nombre}</h3>
+      <p style="color:#25D366; font-weight:bold;">${producto.precio}</p>
+      <p>${producto.descripcion || ""}</p>
+    `;
+    div.onclick = () => {
+      llenarFormulario(producto);
+    };
+    listaProductos.appendChild(div);
+  }
+
+  // Llenar formulario para editar
+  function llenarFormulario(producto) {
+    editId = producto.id;
+    formProducto.nombre.value = producto.nombre;
+    formProducto.precio.value = producto.precio;
+    formProducto.imagen.value = producto.imagen;
+    formProducto.descripcion.value = producto.descripcion || "";
+  }
+
+  // Eliminar producto
+  function eliminarProducto(id) {
+    if (confirm("¿Quieres eliminar este producto?")) {
+      db.collection("productos").doc(id).delete();
+      if (editId === id) {
+        editId = null;
+        formProducto.reset();
+      }
+    }
+  }
+
+  // Agregar o modificar producto
+  formProducto.addEventListener("submit", e => {
+    e.preventDefault();
+    const nombre = formProducto.nombre.value.trim();
+    const precio = formProducto.precio.value.trim();
+    const imagen = formProducto.imagen.value.trim();
+    const descripcion = formProducto.descripcion.value.trim();
+
+    if (editId) {
+      db.collection("productos").doc(editId).set({
+        nombre, precio, imagen, descripcion
+      }).then(() => {
+        editId = null;
+        formProducto.reset();
+      });
+    } else {
+      db.collection("productos").add({
+        nombre, precio, imagen, descripcion
+      }).then(() => {
+        formProducto.reset();
+      });
+    }
+  });
+
+  // Botón para cerrar sesión
+  document.getElementById("btnSalir").addEventListener("click", () => {
+    auth.signOut().then(() => {
+      window.location.href = "login.html";
+    });
+  });
 </script>
 
 </body>
