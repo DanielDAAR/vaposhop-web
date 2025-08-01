@@ -2,72 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login VapeDealer</title>
-  <style>
-    body {
-      background: #111; color: white; font-family: Arial, sans-serif;
-      display: flex; justify-content: center; align-items: center; height: 100vh;
-    }
-    form {
-      background: #1e1e1e; padding: 20px; border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6); width: 300px;
-    }
-    input, button {
-      width: 100%; padding: 10px; margin: 8px 0;
-      border-radius: 6px; border: none;
-    }
-    button {
-      background: #25D366; color: white; font-weight: bold;
-      cursor: pointer;
-    }
-    .error {
-      color: crimson; margin-top: 10px; text-align: center;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <script defer src="login.js"></script>
 </head>
-<body>
-
-<form id="loginForm">
-  <h2>Iniciar sesión</h2>
-  <input type="email" id="email" placeholder="Correo electrónico" required />
-  <input type="password" id="password" placeholder="Contraseña" required />
-  <button type="submit">Entrar</button>
-  <div class="error" id="errorMsg"></div>
-</form>
-
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID"
-  };
-  firebase.initializeApp(firebaseConfig);
-
-  const auth = firebase.auth();
-  const loginForm = document.getElementById("loginForm");
-  const errorMsg = document.getElementById("errorMsg");
-
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = loginForm.email.value;
-    const password = loginForm.password.value;
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        window.location.href = "admin.html";
-      })
-      .catch((error) => {
-        errorMsg.textContent = error.message;
-      });
-  });
-</script>
-
+<body style="background-color: #111; color: white; display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div style="background: #1e1e1e; padding: 30px; border-radius: 10px;">
+    <h2>Acceso Admin</h2>
+    <input id="usuario" placeholder="Usuario" style="padding: 10px; margin: 10px; width: 100%;" />
+    <input id="contraseña" type="password" placeholder="Contraseña" style="padding: 10px; margin: 10px; width: 100%;" />
+    <button id="ingresar" style="padding: 10px; width: 100%; background-color: #25D366; border: none; color: white;">Entrar</button>
+    <p id="mensaje" style="color: red; margin-top: 10px;"></p>
+  </div>
 </body>
 </html>
