@@ -6,6 +6,7 @@
   <title>VapoShop</title>
 </head>
 <body style="margin: 0; font-family: Arial, sans-serif; background-color: #111; color: white;">
+
   <header style="text-align: center; padding: 20px 10px; background: #1e1e1e;">
     <h1 style="margin: 0; font-size: 2.5em;">VapeDealer MX</h1>
     <p style="font-style: italic; color: #ccc;">No vendemos humo. Vendemos estilo 💨</p>
@@ -13,11 +14,16 @@
 
   <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;"></div>
 
+  <!-- Botón flotante de WhatsApp -->
   <a href="https://wa.me/5213346799345" target="_blank"
      style="position: fixed; bottom: 20px; right: 20px; background: #25D366; padding: 12px 16px; border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 0 10px #25D366; text-decoration: none;">
     💬 WhatsApp
   </a>
 
+  <!-- 🥚 Easter egg invisible -->
+  <div id="admin-access" style="position: fixed; bottom: 5px; left: 5px; width: 30px; height: 30px; cursor: pointer;"></div>
+
+  <!-- Firebase + productos -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
@@ -54,5 +60,23 @@
       contenedor.innerHTML += card;
     });
   </script>
+
+  <!-- Script del easter egg -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const egg = document.getElementById("admin-access");
+      let clickCount = 0;
+
+      if (egg) {
+        egg.addEventListener("click", () => {
+          clickCount++;
+          if (clickCount >= 5) {
+            window.location.href = "admin.html";
+          }
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
