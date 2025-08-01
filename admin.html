@@ -1,45 +1,127 @@
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Gestión de Productos</title>
+  <title>Admin - VapeDealer</title>
+  <script type="module" src="admin.js"></script>
   <style>
     body {
       background-color: #111;
       color: white;
       font-family: Arial, sans-serif;
       padding: 20px;
-      margin: 0;
     }
-    h1 {
-      text-align: center;
-    }
-    form {
+    input, textarea, button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
       max-width: 400px;
-      margin: 0 auto 40px;
+    }
+    .producto {
       background: #1e1e1e;
-      padding: 20px;
+      padding: 15px;
+      margin: 15px 0;
       border-radius: 10px;
     }
-    input, textarea {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      box-sizing: border-box;
-      font-size: 1em;
-      background: #222;
-      color: white;
+    .producto img {
+      width: 100px;
     }
-    button {
-      background: #25D366;
-      border: none;
-      color: white;
-      padding: 12px;
-      width: 100%;
-      font-size: 1.1em;
-      cursor: pointer;
-      border-radius: 8px;
-      margin-top
+  </style>
+</head>
+<body>
+  <h1>Panel de Administración</h1>
+  <input type="text" id="nombre" placeholder="Nombre del producto">
+  <input type="text" id="precio" placeholder="Precio">
+  <textarea id="descripcion" placeholder="Descripción"></textarea>
+  <input type="file" id="imagen">
+  <button id="agregar">Agregar producto</button>
+  <hr>
+  <div id="lista-productos"></div>
+</body>
+</html>
+
+<!-- admin.js -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+  authDomain: "vapedealerstore.firebaseapp.com",
+  projectId: "vapedealerstore",
+  storageBucket: "vapedealerstore.appspot.com",
+  messagingSenderId: "669843415263",
+  appId: "1:669843415263:web:27c57bdfa10606e180096a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const nombreInput = document.getElementById("nombre");
+const precioInput = document.getElementById("precio");
+const descripcionInput = document.getElementById("descripcion");
+const imagenInput = document.getElementById("imagen");
+const agregarBtn = document.getElementById("agregar");
+const lista = document.getElementById("lista-productos");
+
+async function mostrarProductos() {
+  lista.innerHTML = "";
+  const querySnapshot = await getDocs(collection(db, "productos"));
+  querySnapshot.forEach((docSnap) => {
+    const p = docSnap.data();
+    lista.innerHTML += `
+      <div class="producto">
+        <img src="${p.imagen}" alt="${p.nombre}" />
+        <h3>${p.nombre}</h3>
+        <p>${p.precio}</p>
+        <p>${p.descripcion}</p>
+        <button onclick="eliminarProducto('${docSnap.id}', '${p.imagen}')">Eliminar</button>
+      </div>
+    `;
+  });
+}
+
+window.eliminarProducto = async function (id, imgURL) {
+  await deleteDoc(doc(db, "productos", id));
+  const imgRef = ref(storage, imgURL);
+  await deleteObject(imgRef).catch(() => {});
+  mostrarProductos();
+};
+
+agregarBtn.addEventListener("click", async () => {
+  const nombre = nombreInput.value;
+  const precio = precioInput.value;
+  const descripcion = descripcionInput.value;
+  const imagen = imagenInput.files[0];
+  if (!nombre || !precio || !descripcion || !imagen) {
+    alert("Todos los campos son obligatorios");
+    return;
+  }
+
+  const imgRef = ref(storage, `imagenes/${Date.now()}_${imagen.name}`);
+  await uploadBytes(imgRef, imagen);
+  const url = await getDownloadURL(imgRef);
+
+  await addDoc(collection(db, "productos"), {
+    nombre,
+    precio,
+    descripcion,
+    imagen: url,
+  });
+
+  nombreInput.value = "";
+  precioInput.value = "";
+  descripcionInput.value = "";
+  imagenInput.value = null;
+
+  mostrarProductos();
+});
+
+mostrarProductos();
+</script>
