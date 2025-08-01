@@ -2,174 +2,54 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin VapeDealer</title>
-  <style>
-    body {
-      background: #111; color: white; font-family: Arial, sans-serif;
-      margin: 0; padding: 20px;
-    }
-    h2 {
-      text-align: center;
-    }
-    #formProducto {
-      background: #1e1e1e; padding: 20px; border-radius: 12px;
-      max-width: 500px; margin: 0 auto 20px auto;
-    }
-    input, textarea, button {
-      width: 100%; margin: 8px 0; padding: 10px; border-radius: 6px; border: none;
-    }
-    button {
-      background: #25D366; color: white; font-weight: bold; cursor: pointer;
-    }
-    #listaProductos {
-      max-width: 700px; margin: 0 auto;
-      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
-    }
-    .productoCard {
-      background: #1e1e1e; border-radius: 12px; padding: 16px;
-      width: 220px; box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      position: relative;
-    }
-    .productoCard img {
-      width: 100%; border-radius: 8px;
-    }
-    .btnEliminar {
-      position: absolute; top: 8px; right: 8px;
-      background: crimson; border: none; color: white;
-      padding: 4px 8px; border-radius: 6px; cursor: pointer;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administrador</title>
 </head>
-<body>
+<body style="background-color: #111; color: white; font-family: Arial, sans-serif; padding: 20px;">
+  <h2>Agregar producto</h2>
+  <form id="form-producto">
+    <input type="text" id="nombre" placeholder="Nombre" required><br><br>
+    <input type="text" id="precio" placeholder="Precio" required><br><br>
+    <input type="text" id="imagen" placeholder="URL de la imagen" required><br><br>
+    <textarea id="descripcion" placeholder="Descripción opcional"></textarea><br><br>
+    <button type="submit">Agregar</button>
+  </form>
 
-<h2>Panel de Administración</h2>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-<form id="formProducto">
-  <input type="text" id="nombre" placeholder="Nombre del producto" required />
-  <input type="text" id="precio" placeholder="Precio (ej. $1200)" required />
-  <input type="text" id="imagen" placeholder="URL de la imagen" required />
-  <textarea id="descripcion" placeholder="Descripción corta" rows="3"></textarea>
-  <button type="submit">Agregar / Modificar Producto</button>
-</form>
-
-<div id="listaProductos"></div>
-
-<button id="btnSalir" style="background:#ff4444; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; display:block; margin: 20px auto;">
-  Cerrar sesión
-</button>
-
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  // Verificar usuario autenticado
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      window.location.href = "login.html";
-    } else {
-      cargarProductos();
-    }
-  });
-
-  const formProducto = document.getElementById("formProducto");
-  const listaProductos = document.getElementById("listaProductos");
-
-  let editId = null;
-
-  // Función para cargar productos desde Firestore
-  function cargarProductos() {
-    db.collection("productos").onSnapshot((snapshot) => {
-      listaProductos.innerHTML = "";
-      snapshot.forEach(doc => {
-        const p = doc.data();
-        p.id = doc.id;
-        mostrarProducto(p);
-      });
-    });
-  }
-
-  // Mostrar producto en pantalla
-  function mostrarProducto(producto) {
-    const div = document.createElement("div");
-    div.className = "productoCard";
-    div.innerHTML = `
-      <button class="btnEliminar" onclick="eliminarProducto('${producto.id}')">X</button>
-      <img src="${producto.imagen}" alt="${producto.nombre}">
-      <h3>${producto.nombre}</h3>
-      <p style="color:#25D366; font-weight:bold;">${producto.precio}</p>
-      <p>${producto.descripcion || ""}</p>
-    `;
-    div.onclick = () => {
-      llenarFormulario(producto);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+      authDomain: "vapedealerstore.firebaseapp.com",
+      projectId: "vapedealerstore",
+      storageBucket: "vapedealerstore.appspot.com",
+      messagingSenderId: "669843415263",
+      appId: "1:669843415263:web:27c57bdfa10606e180096a"
     };
-    listaProductos.appendChild(div);
-  }
 
-  // Llenar formulario para editar
-  function llenarFormulario(producto) {
-    editId = producto.id;
-    formProducto.nombre.value = producto.nombre;
-    formProducto.precio.value = producto.precio;
-    formProducto.imagen.value = producto.imagen;
-    formProducto.descripcion.value = producto.descripcion || "";
-  }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  // Eliminar producto
-  function eliminarProducto(id) {
-    if (confirm("¿Quieres eliminar este producto?")) {
-      db.collection("productos").doc(id).delete();
-      if (editId === id) {
-        editId = null;
-        formProducto.reset();
-      }
-    }
-  }
+    const form = document.getElementById("form-producto");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  // Agregar o modificar producto
-  formProducto.addEventListener("submit", e => {
-    e.preventDefault();
-    const nombre = formProducto.nombre.value.trim();
-    const precio = formProducto.precio.value.trim();
-    const imagen = formProducto.imagen.value.trim();
-    const descripcion = formProducto.descripcion.value.trim();
+      const nombre = document.getElementById("nombre").value;
+      const precio = document.getElementById("precio").value;
+      const imagen = document.getElementById("imagen").value;
+      const descripcion = document.getElementById("descripcion").value;
 
-    if (editId) {
-      db.collection("productos").doc(editId).set({
-        nombre, precio, imagen, descripcion
-      }).then(() => {
-        editId = null;
-        formProducto.reset();
+      await addDoc(collection(db, "productos"), {
+        nombre,
+        precio,
+        imagen,
+        descripcion
       });
-    } else {
-      db.collection("productos").add({
-        nombre, precio, imagen, descripcion
-      }).then(() => {
-        formProducto.reset();
-      });
-    }
-  });
 
-  // Botón para cerrar sesión
-  document.getElementById("btnSalir").addEventListener("click", () => {
-    auth.signOut().then(() => {
-      window.location.href = "login.html";
+      alert("Producto agregado con éxito ✅");
+      form.reset();
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
