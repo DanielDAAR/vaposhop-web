@@ -4,11 +4,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  
   const contenedor = document.getElementById("productos");
+contenedor.innerHTML = ""; // <-- esta línea limpia antes
 
-  productos.forEach((p) => {
-    const card = `
-      <div style="
+productos.forEach((p) => {
+  const card = `
+    <div style="
         background: #1e1e1e;
         border-radius: 12px;
         margin: 16px;
@@ -26,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
           Comprar 💨
         </a>
       </div>
-    `;
-    contenedor.innerHTML += card;
-  });
+  `;
+  contenedor.innerHTML += card;
 });
+  
