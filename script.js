@@ -1,16 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  if (typeof productos === "undefined" || !Array.isArray(productos)) {
-    console.error("No se encontró el arreglo de productos");
-    return;
-  }
-
-  
   const contenedor = document.getElementById("productos");
-contenedor.innerHTML = ""; // <-- esta línea limpia antes
+  contenedor.innerHTML = "";
 
-productos.forEach((p) => {
-  const card = `
-    <div style="
+  const productos = JSON.parse(localStorage.getItem("productos")) || [];
+
+  productos.forEach((p) => {
+    const card = `
+      <div style="
         background: #1e1e1e;
         border-radius: 12px;
         margin: 16px;
@@ -23,13 +19,13 @@ productos.forEach((p) => {
         <img src="${p.imagen}" alt="${p.nombre}" style="width: 100%; border-radius: 8px;">
         <h3 style="margin: 10px 0;">${p.nombre}</h3>
         <p style="color: #25D366; font-weight: bold;">${p.precio}</p>
-        <a href="https://wa.me/5213346799345?text=Hola!%20Estoy%20interesado%20en%20el%20${encodeURIComponent(p.nombre)}"
+        <a href="https://wa.me/5213346799345?text=Hola! Estoy interesado en el ${encodeURIComponent(p.nombre)}"
            style="display: inline-block; padding: 8px 16px; background: #25D366; color: white; text-decoration: none; border-radius: 6px; margin-top: 8px;">
           Comprar 💨
         </a>
       </div>
-  `;
-  contenedor.innerHTML += card;
-});
+    `;
+    contenedor.innerHTML += card;
   });
+});
   
