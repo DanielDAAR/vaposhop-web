@@ -4,14 +4,148 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VapoShop</title>
+
+  <!-- Estilo Apple + Amazon -->
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      color: #111;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2em;
+      color: #111;
+    }
+
+    header p {
+      font-style: italic;
+      color: #666;
+    }
+
+    #productos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .producto-card {
+      width: 150px;
+      background: #fff;
+      margin: 12px;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .producto-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .producto-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .producto-card .info {
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .producto-card .precio {
+      color: #25D366;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    #detalle {
+      display: none;
+      padding: 30px;
+      background: #ffffff;
+      color: #111;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+
+    #detalle img {
+      max-width: 300px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    #detalle h2 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+
+    #detalle .precio {
+      color: #25D366;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    #detalle a {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: #25D366;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+
+    #admin-access {
+      position: fixed;
+      bottom: 5px;
+      left: 5px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body style="margin: 0; font-family: Arial, sans-serif; background-color: #111; color: white;">
-  <header style="text-align: center; padding: 20px 10px; background: #1e1e1e;">
-    <h1 style="margin: 0; font-size: 2.5em;">VapeDealer MX</h1>
-    <p style="font-style: italic; color: #ccc;">No vendemos humo. Vendemos estilo 💨</p>
+<body>
+  <header>
+    <h1>VapeDealer MX</h1>
+    <p>No vendemos humo. Vendemos estilo 💨</p>
   </header>
 
-  <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;"></div>
+  <div id="productos"></div>
+
+  <!-- Detalle del producto -->
+  <div id="detalle">
+    <button onclick="cerrarDetalle()" class="close-btn">✖</button>
+    <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+      <img id="detalle-img" src="" />
+      <h2 id="detalle-nombre"></h2>
+      <p id="detalle-precio" class="precio"></p>
+      <p id="detalle-desc">Este vape tiene características únicas y un diseño que impone. Ideal para quienes buscan estilo y potencia.</p>
+      <a id="detalle-link" href="#" target="_blank">Comprar por WhatsApp</a>
+    </div>
+  </div>
 
   <!-- WhatsApp flotante -->
   <a href="https://wa.me/5213346799345" target="_blank"
@@ -19,12 +153,12 @@
     💬 WhatsApp
   </a>
 
-  <!-- 🥚 Easter egg invisible -->
-  <div id="admin-access" style="position: fixed; bottom: 5px; left: 5px; width: 30px; height: 30px; cursor: pointer;"></div>
+  <!-- Acceso admin oculto -->
+  <div id="admin-access"></div>
 
   <script src="script.js"></script>
 
-  <!-- Script para easter egg -->
+  <!-- Script easter egg -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const egg = document.getElementById("admin-access");
@@ -41,6 +175,19 @@
         });
       }
     });
+
+    function mostrarDetalle(p) {
+      document.getElementById("detalle-img").src = p.imagen;
+      document.getElementById("detalle-nombre").textContent = p.nombre;
+      document.getElementById("detalle-precio").textContent = p.precio;
+      document.getElementById("detalle-link").href = "https://wa.me/5213346799345?text=Hola! Estoy interesado en el " + encodeURIComponent(p.nombre);
+      document.getElementById("detalle").style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+
+    function cerrarDetalle() {
+      document.getElementById("detalle").style.display = "none";
+    }
   </script>
 </body>
 </html>
