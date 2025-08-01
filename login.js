@@ -1,6 +1,6 @@
 document.getElementById("ingresar").addEventListener("click", () => {
-  const user = document.getElementById("usuario").value;
-  const pass = document.getElementById("contraseña").value;
+  const user = document.getElementById("usuario").value.trim();
+  const pass = document.getElementById("contraseña").value.trim();
 
   const adminUser = "admin";
   const adminPass = "1234";
