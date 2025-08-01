@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
+// Tu configuración de Firebase - reemplaza con la tuya:
 const firebaseConfig = {
   apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
   authDomain: "vapedealerstore.firebaseapp.com",
@@ -13,31 +13,35 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-const contenedor = document.getElementById("productos");
-contenedor.innerHTML = "";
+const productosContainer = document.getElementById("productos");
 
-const querySnapshot = await getDocs(collection(db, "productos"));
-for (const doc of querySnapshot.docs) {
-  const p = doc.data();
-  const url = await getDownloadURL(ref(storage, p.imagen));
-  const card = `
-    <div style="background: #1e1e1e; border-radius: 12px; margin: 16px; padding: 16px; width: 240px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;">
-      <img src="${url}" alt="${p.nombre}" style="width: 100%; border-radius: 8px;">
-      <h3>${p.nombre}</h3>
-      <p style="color: #25D366;">${p.precio}</p>
-      <p style="font-size: 0.9em;">${p.descripcion}</p>
-      <a href="https://wa.me/5213346799345?text=Hola! Estoy interesado en el ${encodeURIComponent(p.nombre)}"
-         style="display: inline-block; margin-top: 8px; padding: 8px 16px; background: #25D366; color: white; text-decoration: none; border-radius: 6px;">
-        Comprar 💨
-      </a>
-    </div>
-  `;
-  contenedor.innerHTML += card;
+// Función para mostrar productos en la página
+async function cargarProductos() {
+  productosContainer.innerHTML = "Cargando productos...";
+  try {
+    const querySnapshot = await getDocs(collection(db, "productos"));
+    productosContainer.innerHTML = "";
+    querySnapshot.forEach((doc) => {
+      const p = doc.data();
+      const card = document.createElement("div");
+      card.className = "producto-card";
+      card.innerHTML = `
+        <img src="${p.imagen}" alt="${p.nombre}" class="producto-img" />
+        <h3 class="producto-nombre">${p.nombre}</h3>
+        <p class="producto-precio">${p.precio}</p>
+        <p class="producto-descripcion">${p.descripcion || ""}</p>
+        <a href="https://wa.me/5213346799345?text=Hola! Estoy interesado en el producto ${encodeURIComponent(p.nombre)}" target="_blank" style="display:inline-block; margin-top:8px; background:#25D366; color:#fff; padding:6px 12px; border-radius:6px; text-decoration:none;">Comprar 💨</a>
+      `;
+      productosContainer.appendChild(card);
+    });
+  } catch (error) {
+    productosContainer.innerHTML = "Error cargando productos";
+    console.error("Error cargando productos:", error);
+  }
 }
 
-// 🥚 Activar login oculto
+// Botón secreto para entrar a login.html
 document.getElementById("admin-access").addEventListener("click", () => {
   let count = parseInt(localStorage.getItem("eggClicks")) || 0;
   count++;
@@ -48,3 +52,5 @@ document.getElementById("admin-access").addEventListener("click", () => {
     localStorage.setItem("eggClicks", count);
   }
 });
+
+cargarProductos();
