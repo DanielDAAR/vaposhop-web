@@ -3,16 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
-  <script defer src="login.js"></script>
+  <title>Login Admin</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    .login-box {
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+      box-sizing: border-box;
+    }
+    input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      background-color: #25D366;
+      border: none;
+      color: white;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    #mensaje {
+      color: #ff4d4d;
+      margin-top: 10px;
+      height: 20px;
+      text-align: center;
+    }
+  </style>
 </head>
-<body style="background-color: #111; color: white; display: flex; justify-content: center; align-items: center; height: 100vh;">
-  <div style="background: #1e1e1e; padding: 30px; border-radius: 10px;">
+<body>
+  <div class="login-box">
     <h2>Acceso Admin</h2>
-    <input id="usuario" placeholder="Usuario" style="padding: 10px; margin: 10px; width: 100%;" />
-    <input id="contraseña" type="password" placeholder="Contraseña" style="padding: 10px; margin: 10px; width: 100%;" />
-    <button id="ingresar" style="padding: 10px; width: 100%; background-color: #25D366; border: none; color: white;">Entrar</button>
-    <p id="mensaje" style="color: red; margin-top: 10px;"></p>
+    <input id="usuario" type="text" placeholder="Usuario" autocomplete="username" />
+    <input id="contraseña" type="password" placeholder="Contraseña" autocomplete="current-password" />
+    <button id="ingresar">Entrar</button>
+    <p id="mensaje"></p>
   </div>
+
+  <script src="login.js"></script>
 </body>
 </html>
