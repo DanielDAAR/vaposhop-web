@@ -1,81 +1,58 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VapeDealer MX</title>
-  <style>
-    body {
-      margin: 0; font-family: Arial, sans-serif; background-color: #111; color: white;
-    }
-    header {
-      text-align: center; padding: 20px 10px; background: #1e1e1e;
-    }
-    #productos {
-      display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;
-    }
-    .card {
-      background: #1e1e1e; border-radius: 12px; margin: 12px; padding: 16px;
-      width: 220px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center;
-      transition: transform 0.3s;
-      cursor: pointer;
-    }
-    .card:hover {
-      transform: scale(1.05);
-    }
-    .card img {
-      width: 100%; border-radius: 8px;
-    }
-    .btnComprar {
-      display: inline-block; padding: 8px 16px; background: #25D366; color: white;
-      text-decoration: none; border-radius: 6px; margin-top: 8px;
-    }
-    /* WhatsApp flotante */
-    #whatsappBtn {
-      position: fixed; bottom: 20px; right: 20px; background: #25D366;
-      padding: 12px 16px; border-radius: 50px; color: white; font-weight: bold;
-      box-shadow: 0 0 10px #25D366; text-decoration: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VapoShop</title>
 </head>
-<body>
+<body style="margin: 0; font-family: Arial, sans-serif; background-color: #111; color: white;">
+  <header style="text-align: center; padding: 20px 10px; background: #1e1e1e;">
+    <h1 style="margin: 0; font-size: 2.5em;">VapeDealer MX</h1>
+    <p style="font-style: italic; color: #ccc;">No vendemos humo. Vendemos estilo 💨</p>
+  </header>
 
-<header>
-  <h1>VapeDealer MX</h1>
-  <p style="font-style: italic; color: #ccc;">No vendemos humo. Vendemos estilo 💨</p>
-</header>
+  <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;"></div>
 
-<div id="productos"></div>
+  <a href="https://wa.me/5213346799345" target="_blank"
+     style="position: fixed; bottom: 20px; right: 20px; background: #25D366; padding: 12px 16px; border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 0 10px #25D366; text-decoration: none;">
+    💬 WhatsApp
+  </a>
 
-<a id="whatsappBtn" href="https://wa.me/5213346799345" target="_blank">💬 WhatsApp</a>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+      authDomain: "vapedealerstore.firebaseapp.com",
+      projectId: "vapedealerstore",
+      storageBucket: "vapedealerstore.appspot.com",
+      messagingSenderId: "669843415263",
+      appId: "1:669843415263:web:27c57bdfa10606e180096a"
+    };
 
-<script>
-  const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  const contenedor = document.getElementById("productos");
+    const contenedor = document.getElementById("productos");
+    const querySnapshot = await getDocs(collection(db, "productos"));
 
-  function cargarProductos() {
-    db.collection("productos").get().then(snapshot => {
-      contenedor.innerHTML = "";
-      snapshot.forEach(doc => {
-        const p = doc.data();
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${p.imagen}" alt="${p.nombre}">
-          <h3>${p.nombre}</h3>
+    querySnapshot.forEach((doc) => {
+      const p = doc.data();
+      const card = `
+        <div style="background: #1e1e1e; border-radius: 12px; margin: 16px; padding: 16px; width: 240px; box-shadow: 0 0 10px rgba(0,0,0,0.5); text-align: center; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          <img src="${p.imagen}" alt="${p.nombre}" style="width: 100%; border-radius: 8px;">
+          <h3 style="margin: 10px 0;">${p.nombre}</h3>
           <p style="color: #25D366; font-weight: bold;">${p.precio}</p>
-          <p>${p.descripcion || ""}</p
+          <p style="font-size: 0.9em; color: #ccc;">${p.descripcion || ''}</p>
+          <a href="https://wa.me/5213346799345?text=Hola! Estoy interesado en el ${encodeURIComponent(p.nombre)}"
+             style="display: inline-block; padding: 8px 16px; background: #25D366; color: white; text-decoration: none; border-radius: 6px; margin-top: 8px;">
+            Comprar 💨
+          </a>
+        </div>
+      `;
+      contenedor.innerHTML += card;
+    });
+  </script>
+</body>
+</html>
