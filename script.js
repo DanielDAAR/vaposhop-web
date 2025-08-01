@@ -31,4 +31,5 @@ productos.forEach((p) => {
   `;
   contenedor.innerHTML += card;
 });
+  });
   
