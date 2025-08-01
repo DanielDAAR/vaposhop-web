@@ -2,7 +2,7 @@ const productos = [
   {
     nombre: "Vape Cloud X100",
     precio: "$799",
-    imagen: "https://via.placeholder.com/200x200?text=Cloud+X100"
+    imagen: "/img/vape1.png"
   },
   {
     nombre: "Smok Mini Pro",
