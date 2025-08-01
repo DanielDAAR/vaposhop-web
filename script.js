@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const contenedor = document.getElementById("productos");
+  if (!contenedor) return;
+
   contenedor.innerHTML = "";
 
   const productos = JSON.parse(localStorage.getItem("productos")) || [];
@@ -28,4 +30,3 @@ document.addEventListener("DOMContentLoaded", function () {
     contenedor.innerHTML += card;
   });
 });
-  
