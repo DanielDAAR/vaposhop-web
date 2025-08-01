@@ -1,55 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administrador</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel Admin - VapoShop</title>
+<style>
+  body {
+    background-color: #111; color: white; font-family: Arial, sans-serif; padding: 20px;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  form, .productos-lista {
+    margin-bottom: 30px;
+  }
+  input, textarea {
+    width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: none;
+  }
+  button {
+    background-color: #25D366; border: none; color: white; padding: 10px 16px; border-radius: 6px;
+    cursor: pointer;
+  }
+  .producto-item {
+    background: #1e1e1e; padding: 12px; margin-bottom: 12px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .producto-info {
+    flex: 1;
+    margin-right: 12px;
+  }
+  .producto-info img {
+    height: 60px; width: auto; border-radius: 6px; margin-right: 12px;
+  }
+  .btn-accion {
+    margin-left: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+  .btn-editar {
+    background-color: #007bff;
+  }
+  .btn-eliminar {
+    background-color: #dc3545;
+  }
+</style>
 </head>
-<body style="background-color: #111; color: white; font-family: Arial, sans-serif; padding: 20px;">
-  <h2>Agregar producto</h2>
-  <form id="form-producto">
-    <input type="text" id="nombre" placeholder="Nombre" required><br><br>
-    <input type="text" id="precio" placeholder="Precio" required><br><br>
-    <input type="text" id="imagen" placeholder="URL de la imagen" required><br><br>
-    <textarea id="descripcion" placeholder="Descripción opcional"></textarea><br><br>
-    <button type="submit">Agregar</button>
-  </form>
+<body>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+<h2>Agregar / Editar Producto</h2>
+<form id="form-producto">
+  <input type="hidden" id="producto-id" />
+  <input type="text" id="nombre" placeholder="Nombre" required />
+  <input type="text" id="precio" placeholder="Precio" required />
+  <input type="file" id="imagen" accept="image/*" />
+  <textarea id="descripcion" placeholder="Descripción"></textarea>
+  <button type="submit">Guardar Producto</button>
+</form>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
-      authDomain: "vapedealerstore.firebaseapp.com",
-      projectId: "vapedealerstore",
-      storageBucket: "vapedealerstore.appspot.com",
-      messagingSenderId: "669843415263",
-      appId: "1:669843415263:web:27c57bdfa10606e180096a"
-    };
+<h2>Productos</h2>
+<div class="productos-lista" id="productos-lista"></div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs,
+    deleteDoc, doc, updateDoc
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytes, getDownloadURL, deleteObject
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
-    const form = document.getElementById("form-producto");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+    authDomain: "vapedealerstore.firebaseapp.com",
+    projectId: "vapedealerstore",
+    storageBucket: "vapedealerstore.appspot.com",
+    messagingSenderId: "669843415263",
+    appId: "1:669843415263:web:27c57bdfa10606e180096a"
+  };
 
-      const nombre = document.getElementById("nombre").value;
-      const precio = document.getElementById("precio").value;
-      const imagen = document.getElementById("imagen").value;
-      const descripcion = document.getElementById("descripcion").value;
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-      await addDoc(collection(db, "productos"), {
-        nombre,
-        precio,
-        imagen,
-        descripcion
-      });
+  const form = document.getElementById("form-producto");
+  const nombreInput = document.getElementById("nombre");
+  const precioInput = document.getElementById("precio");
+  const imagenInput = document.getElementById("imagen");
+  const descripcionInput = document.getElementById("descripcion");
+  const productoIdInput = document.getElementById("producto-id");
+  const productosLista = document.getElementById("productos-lista");
 
-      alert("Producto agregado con éxito ✅");
-      form.reset();
-    });
-  </script>
-</body>
-</html>
+  let productos = [];
+  let editando = false;
+  let editId = null;
+  let imgPathActual = null;
+
+  async function cargarProductos() {
+    productosLista.innerHTML = "";
+    const querySnapshot = await getDocs(collection(db, "productos"));
+    productos = [];
+    querySnapshot.forEach((docSnap) => {
+      const p =
