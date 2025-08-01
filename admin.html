@@ -3,20 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Agregar Producto</title>
-  <script type="module" src="admin.js"></script>
-</head>
-<body style="background: #111; color: white; font-family: Arial; padding: 20px;">
-  <h1>Agregar Producto</h1>
-
-  <form id="formProducto" style="display: flex; flex-direction: column; max-width: 400px;">
-    <input type="text" id="nombre" placeholder="Nombre del producto" required style="margin: 10px 0; padding: 10px;">
-    <input type="text" id="precio" placeholder="Precio" required style="margin: 10px 0; padding: 10px;">
-    <textarea id="descripcion" placeholder="Descripción" required style="margin: 10px 0; padding: 10px;"></textarea>
-    <input type="file" id="imagen" required style="margin: 10px 0;">
-    <button type="submit" style="padding: 10px; background-color: #25D366; color: white; border: none;">Guardar</button>
-  </form>
-
-  <p id="mensaje"></p>
-</body>
-</html>
+  <title>Admin - Gestión de Productos</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 400px;
+      margin: 0 auto 40px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      box-sizing: border-box;
+      font-size: 1em;
+      background: #222;
+      color: white;
+    }
+    button {
+      background: #25D366;
+      border: none;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      font-size: 1.1em;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-top
