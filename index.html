@@ -12,12 +12,35 @@
   </header>
 
   <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center; padding: 20px;"></div>
-  <div id="admin-access" style="position: fixed; bottom: 5px; left: 5px; width: 30px; height: 30px;"></div>
+
+  <!-- WhatsApp flotante -->
   <a href="https://wa.me/5213346799345" target="_blank"
      style="position: fixed; bottom: 20px; right: 20px; background: #25D366; padding: 12px 16px; border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 0 10px #25D366; text-decoration: none;">
     💬 WhatsApp
   </a>
 
+  <!-- 🥚 Easter egg invisible -->
+  <div id="admin-access" style="position: fixed; bottom: 5px; left: 5px; width: 30px; height: 30px; cursor: pointer;"></div>
+
   <script src="script.js"></script>
+
+  <!-- Script para easter egg -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const egg = document.getElementById("admin-access");
+      if (egg) {
+        egg.addEventListener("click", function () {
+          let count = parseInt(localStorage.getItem("eggClicks")) || 0;
+          count++;
+          if (count >= 5) {
+            localStorage.removeItem("eggClicks");
+            window.location.href = "login.html";
+          } else {
+            localStorage.setItem("eggClicks", count);
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
