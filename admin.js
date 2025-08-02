@@ -1,10 +1,9 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
-  authDomain: "vapedealerstore.firebaseapp.com",
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_DOMINIO.firebaseapp.com",
   projectId: "vapedealerstore",
   storageBucket: "vapedealerstore.appspot.com",
   messagingSenderId: "669843415263",
@@ -13,31 +12,58 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
+const productosRef = collection(db, "productos");
 
-const form = document.getElementById("formProducto");
-const mensaje = document.getElementById("mensaje");
+const nombre = document.getElementById("nombre");
+const precio = document.getElementById("precio");
+const descripcion = document.getElementById("descripcion");
+const imagen = document.getElementById("imagen");
+const agregar = document.getElementById("agregar");
+const lista = document.getElementById("lista-productos");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+async function cargarProductos() {
+  lista.innerHTML = "";
+  const snapshot = await getDocs(productosRef);
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <div style="margin-bottom: 16px; background:#222; padding:12px; border-radius:8px;">
+        <img src="${data.imagen}" width="100%" style="border-radius:8px;" />
+        <h4>${data.nombre}</h4>
+        <p>${data.precio}</p>
+        <p>${data.descripcion}</p>
+        <button onclick="eliminarProducto('${docSnap.id}')">Eliminar</button>
+      </div>
+    `;
+    lista.appendChild(div);
+  });
+}
 
-  const nombre = document.getElementById("nombre").value;
-  const precio = document.getElementById("precio").value;
-  const descripcion = document.getElementById("descripcion").value;
-  const archivo = document.getElementById("imagen").files[0];
+agregar.addEventListener("click", async () => {
+  if (!nombre.value || !precio.value || !descripcion.value || !imagen.value) {
+    alert("Llena todos los campos");
+    return;
+  }
 
-  if (!archivo) return;
-
-  const storageRef = ref(storage, archivo.name);
-  await uploadBytes(storageRef, archivo);
-
-  await addDoc(collection(db, "productos"), {
-    nombre,
-    precio,
-    descripcion,
-    imagen: archivo.name
+  await addDoc(productosRef, {
+    nombre: nombre.value,
+    precio: precio.value,
+    descripcion: descripcion.value,
+    imagen: imagen.value
   });
 
-  mensaje.textContent = "Producto guardado correctamente.";
-  form.reset();
+  nombre.value = "";
+  precio.value = "";
+  descripcion.value = "";
+  imagen.value = "";
+
+  cargarProductos();
 });
+
+window.eliminarProducto = async (id) => {
+  await deleteDoc(doc(db, "productos", id));
+  cargarProductos();
+};
+
+cargarProductos();
