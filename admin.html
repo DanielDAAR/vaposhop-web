@@ -2,21 +2,101 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel Admin - VapeDealer MX</title>
-  <script type="module" src="./js/admin.js" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin VapeDealer</title>
 </head>
-<body style="background-color: #111; color: white; font-family: Arial; padding: 20px;">
-  <h2>Agregar nuevo producto</h2>
+<body style="font-family: Arial; background: #111; color: white; padding: 20px;">
 
-  <input id="nombre" type="text" placeholder="Nombre del producto" /><br /><br />
-  <input id="precio" type="text" placeholder="Precio" /><br /><br />
-  <textarea id="descripcion" placeholder="Descripción del producto"></textarea><br /><br />
-  <input id="imagen" type="text" placeholder="URL de imagen desde Imgur" /><br /><br />
+  <h1>Panel de Administración</h1>
 
-  <button id="agregar">Agregar Producto</button>
+  <input type="text" id="nombre" placeholder="Nombre del producto" /><br><br>
+  <input type="text" id="precio" placeholder="Precio" /><br><br>
+  <input type="text" id="descripcion" placeholder="Descripción" /><br><br>
+  <input type="text" id="imagen" placeholder="URL de imagen (Ejemplo: https://i.imgur.com/xxxxxxx.png)" 
+         title="Sube la imagen a Imgur y pega aquí el link directo que termina en .png o .jpg" /><br><br>
+  <button id="agregar">Agregar producto</button>
 
-  <hr />
-  <h3>Productos actuales</h3>
+  <h2>Productos actuales</h2>
   <div id="lista-productos"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+      authDomain: "vapedealerstore.firebaseapp.com",
+      projectId: "vapedealerstore",
+      storageBucket: "vapedealerstore.appspot.com",
+      messagingSenderId: "669843415263",
+      appId: "1:669843415263:web:27c57bdfa10606e180096a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productosRef = collection(db, "productos");
+
+    const nombre = document.getElementById("nombre");
+    const precio = document.getElementById("precio");
+    const descripcion = document.getElementById("descripcion");
+    const imagen = document.getElementById("imagen");
+    const lista = document.getElementById("lista-productos");
+
+    document.getElementById("agregar").addEventListener("click", async () => {
+      if (!nombre.value || !precio.value || !descripcion.value || !imagen.value) {
+        alert("Llena todos los campos.");
+        return;
+      }
+
+      try {
+        await addDoc(productosRef, {
+          nombre: nombre.value,
+          precio: precio.value,
+          descripcion: descripcion.value,
+          imagen: imagen.value
+        });
+        alert("Producto agregado");
+        nombre.value = "";
+        precio.value = "";
+        descripcion.value = "";
+        imagen.value = "";
+        cargarProductos();
+      } catch (e) {
+        console.error("Error al agregar producto:", e);
+        alert("Error al agregar producto");
+      }
+    });
+
+    async function cargarProductos() {
+      lista.innerHTML = "";
+      const querySnapshot = await getDocs(productosRef);
+      querySnapshot.forEach((docu) => {
+        const data = docu.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <hr>
+          <strong>${data.nombre}</strong><br>
+          ${data.precio}<br>
+          ${data.descripcion}<br>
+          <img src="${data.imagen}" alt="${data.nombre}" style="width:100px; border-radius: 8px; margin-top: 6px;"><br>
+          <button onclick="eliminarProducto('${docu.id}')">Eliminar</button><br><br>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    window.eliminarProducto = async function (id) {
+      try {
+        await deleteDoc(doc(db, "productos", id));
+        alert("Producto eliminado");
+        cargarProductos();
+      } catch (e) {
+        console.error("Error al eliminar:", e);
+        alert("No se pudo eliminar");
+      }
+    };
+
+    cargarProductos();
+  </script>
 </body>
 </html>
