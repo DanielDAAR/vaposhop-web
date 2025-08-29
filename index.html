@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel</title>
+  <title>VapeDealer MX</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="admin-container">
-    <h1>Panel Admin</h1>
-    <div class="form-admin">
-      <input id="nombre" placeholder="Nombre producto">
-      <input id="precio" placeholder="Precio">
-      <input id="descripcion" placeholder="Descripción">
-      <input id="imagen" placeholder="URL de la imagen">
-      <button id="agregar">Agregar Producto</button>
-    </div>
-    <div id="lista-productos" class="lista-productos"></div>
-  </div>
+  <header>
+    <h1>VapeDealer MX</h1>
+    <p class="subtitulo">No vendemos humo. Vendemos estilo 💨</p>
+  </header>
 
-  <script type="module" src="admin.js"></script>
+  <div id="productos" class="productos-container"></div>
+
+  <a href="https://wa.me/5213346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
+
+  <!-- Botón secreto para acceso admin -->
+  <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>
+
+  <script type="module" src="script.js"></script>
 </body>
 </html>
