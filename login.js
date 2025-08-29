@@ -11,3 +11,4 @@ document.getElementById("ingresar").addEventListener("click", () => {
     document.getElementById("mensaje").textContent = "Usuario o contraseña incorrectos";
   }
 });
+
