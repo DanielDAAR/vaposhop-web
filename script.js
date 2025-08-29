@@ -39,12 +39,13 @@ async function cargarProductos() {
   }
 }
 
+// Botón secreto admin
 let count = parseInt(localStorage.getItem("eggClicks")) || 0;
 document.getElementById("admin-access").addEventListener("click", () => {
   count++;
   if (count >= 5) {
     localStorage.removeItem("eggClicks");
-    window.location.href = "login.html";
+    window.location.href = "login.html"; // ahora solo lleva al login
   } else {
     localStorage.setItem("eggClicks", count);
   }
