@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https
 
 const firebaseConfig = {
   apiKey: "TU_API_KEY",
-  authDomain: "TU_DOMINIO.firebaseapp.com",
+  authDomain: "vapedealerstore.firebaseapp.com",
   projectId: "vapedealerstore",
   storageBucket: "vapedealerstore.appspot.com",
   messagingSenderId: "669843415263",
@@ -28,13 +28,11 @@ async function cargarProductos() {
     const data = docSnap.data();
     const div = document.createElement("div");
     div.innerHTML = `
-      <div style="margin-bottom: 16px; background:#222; padding:12px; border-radius:8px;">
-        <img src="${data.imagen}" width="100%" style="border-radius:8px;" />
-        <h4>${data.nombre}</h4>
-        <p>${data.precio}</p>
-        <p>${data.descripcion}</p>
-        <button onclick="eliminarProducto('${docSnap.id}')">Eliminar</button>
-      </div>
+      <img src="${data.imagen}" width="100%" style="border-radius:8px;" />
+      <h4>${data.nombre}</h4>
+      <p>${data.precio}</p>
+      <p>${data.descripcion}</p>
+      <button onclick="eliminarProducto('${docSnap.id}')">Eliminar</button>
     `;
     lista.appendChild(div);
   });
