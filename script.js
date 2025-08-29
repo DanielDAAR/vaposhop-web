@@ -1,9 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-// Tu configuración de Firebase - reemplaza con la tuya:
 const firebaseConfig = {
-  apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+  apiKey: "TU_API_KEY",
   authDomain: "vapedealerstore.firebaseapp.com",
   projectId: "vapedealerstore",
   storageBucket: "vapedealerstore.appspot.com",
@@ -16,7 +15,6 @@ const db = getFirestore(app);
 
 const productosContainer = document.getElementById("productos");
 
-// Función para mostrar productos en la página
 async function cargarProductos() {
   productosContainer.innerHTML = "Cargando productos...";
   try {
@@ -37,13 +35,12 @@ async function cargarProductos() {
     });
   } catch (error) {
     productosContainer.innerHTML = "Error cargando productos";
-    console.error("Error cargando productos:", error);
+    console.error("Error:", error);
   }
 }
 
-// Botón secreto para entrar a login.html
+let count = parseInt(localStorage.getItem("eggClicks")) || 0;
 document.getElementById("admin-access").addEventListener("click", () => {
-  let count = parseInt(localStorage.getItem("eggClicks")) || 0;
   count++;
   if (count >= 5) {
     localStorage.removeItem("eggClicks");
