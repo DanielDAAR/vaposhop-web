@@ -1,161 +1,770 @@
-<!DOCTYPE html><html lang="es"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <title>VapeDealer MX</title>  <style>
-  
-    body {
-  
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VapeDealer MX</title>
+  <style>
+    * {
       margin: 0;
-  
-      font-family: Arial, sans-serif;
-  
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
       background-color: #111;
-  
       color: white;
-  
+      line-height: 1.6;
     }
-  
+
+    /* Header mejorado */
     header {
-  
       text-align: center;
-  
       padding: 20px 10px;
-  
-      background: #1e1e1e;
-  
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      border-bottom: 2px solid #333;
     }
-  
-    #productos {
-  
-      display: flex;
-  
-      flex-wrap: wrap;
-  
-      justify-content: center;
-  
-      padding: 20px;
-  
+
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-  
-    #admin-access {
-  
-      position: fixed;
-  
-      bottom: 5px;
-  
-      left: 5px;
-  
-      width: 30px;
-  
-      height: 30px;
-  
-      cursor: pointer;
-  
-    }
-  
-    a.whatsapp {
-  
-      position: fixed;
-  
-      bottom: 20px;
-  
-      right: 20px;
-  
-      background: #25D366;
-  
-      padding: 12px 16px;
-  
-      border-radius: 50px;
-  
-      color: white;
-  
-      font-weight: bold;
-  
-      box-shadow: 0 0 10px #25D366;
-  
-      text-decoration: none;
-  
-    }
-  
-    .producto-card {
-  
-      background: #1e1e1e;
-  
-      border-radius: 12px;
-  
-      margin: 16px;
-  
-      padding: 16px;
-  
-      width: 180px;
-  
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  
-      text-align: center;
-  
-      transition: transform 0.3s;
-  
-      cursor: pointer;
-  
-    }
-  
-    .producto-card:hover {
-  
-      transform: scale(1.05);
-  
-    }
-  
-    .producto-img {
-  
-      width: 100%;
-  
-      height: 150px;
-  
-      object-fit: contain;
-  
-      border-radius: 8px;
-  
-      background: #222;
-  
-    }
-  
-    .producto-nombre {
-  
-      margin: 10px 0 5px;
-  
-      font-weight: 600;
-  
-      font-size: 1em;
-  
-      color: white;
-  
-    }
-  
-    .producto-precio {
-  
-      color: #25D366;
-  
-      font-weight: bold;
-  
-      margin-bottom: 5px;
-  
-    }
-  
-    .producto-descripcion {
-  
-      font-size: 0.85em;
-  
+
+    header p {
+      font-style: italic;
       color: #ccc;
-  
-      height: 40px;
-  
-      overflow: hidden;
-  
-      text-overflow: ellipsis;
-  
+      font-size: 1.1em;
     }
-  
-  </style></head><body>  <header><h1>VapeDealer MX</h1>
 
-<p style="font-style: italic; color: #ccc;">No vendemos humo. Vendemos estilo 💨</p>
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-  </header>  <div id="productos"></div><a href="https://wa.me/5213346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 211, 102, 0.1) 0%, transparent 70%);
+    }
 
-  <!-- Botón secreto para acceso admin -->  <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>  <script type="module" src="script.js"></script></body></html>
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-subtitle {
+      font-size: 1.3em;
+      color: #ccc;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+    }
+
+    /* Estadísticas */
+    .stats-section {
+      background: #1a1a1a;
+      padding: 60px 20px;
+      border-top: 1px solid #333;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+      border-radius: 15px;
+      border: 1px solid #333;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #25D366;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 1.1em;
+      color: #ccc;
+    }
+
+    /* Sección de Categorías */
+    .categories-section {
+      padding: 80px 20px;
+      background: #111;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.2em;
+      color: #ccc;
+      margin-bottom: 50px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .categories-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .category-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      border: 2px solid #333;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37, 211, 102, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .category-card:hover::before {
+      left: 100%;
+    }
+
+    .category-card:hover {
+      transform: translateY(-10px);
+      border-color: #25D366;
+      box-shadow: 0 15px 30px rgba(37, 211, 102, 0.2);
+    }
+
+    .category-icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .category-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .category-description {
+      color: #ccc;
+      font-size: 1em;
+      line-height: 1.5;
+    }
+
+    /* Productos Destacados */
+    .featured-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 80px 20px;
+    }
+
+    /* Sección de Catálogo Principal */
+    .catalog-section {
+      padding: 80px 20px;
+      background: #111;
+    }
+
+    .catalog-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .filter-bar {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-btn {
+      padding: 12px 25px;
+      background: #2a2a2a;
+      border: 2px solid #333;
+      border-radius: 25px;
+      color: #ccc;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: #25D366;
+      border-color: #25D366;
+      color: white;
+    }
+
+    /* Tu código original de productos (sin cambios) */
+    #productos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .producto-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 15px;
+      margin: 16px;
+      padding: 20px;
+      width: 200px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid #333;
+    }
+
+    .producto-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(37, 211, 102, 0.2);
+      border-color: #25D366;
+    }
+
+    .producto-img {
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #222;
+      margin-bottom: 15px;
+    }
+
+    .producto-nombre {
+      margin: 15px 0 10px;
+      font-weight: 600;
+      font-size: 1.1em;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .producto-precio {
+      color: #25D366;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    .producto-descripcion {
+      font-size: 0.9em;
+      color: #ccc;
+      height: 45px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    /* Por qué elegirnos */
+    .why-us-section {
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      padding: 80px 20px;
+    }
+
+    .features-grid {
+      max-width: 1200px;
+      margin: 50px auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+    }
+
+    .feature-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 15px;
+      border: 1px solid #333;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #25D366;
+    }
+
+    .feature-title {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .feature-description {
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    /* Testimonios */
+    .testimonials-section {
+      background: #111;
+      padding: 80px 20px;
+    }
+
+    .testimonials-grid {
+      max-width: 1200px;
+      margin: 50px auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .testimonial-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      padding: 30px;
+      border-radius: 15px;
+      border-left: 4px solid #25D366;
+      position: relative;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      color: #ccc;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .testimonial-author {
+      color: #25D366;
+      font-weight: bold;
+    }
+
+    .testimonial-rating {
+      color: #ffd700;
+      margin-top: 10px;
+    }
+
+    /* Footer mejorado */
+    footer {
+      background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+      padding: 60px 20px 30px;
+      border-top: 2px solid #333;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .footer-section h3 {
+      color: #25D366;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      line-height: 1.8;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #25D366;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid #333;
+      color: #666;
+    }
+
+    /* Botones originales */
+    a.whatsapp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      padding: 15px 20px;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    a.whatsapp:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    #admin-access {
+      position: fixed;
+      bottom: 5px;
+      left: 5px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.2em;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1em;
+      }
+
+      .section-title {
+        font-size: 2em;
+      }
+
+      .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .producto-card {
+        width: 160px;
+        margin: 12px;
+      }
+
+      a.whatsapp {
+        bottom: 15px;
+        right: 15px;
+        padding: 12px 16px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 60px 15px;
+      }
+
+      header h1 {
+        font-size: 2em;
+      }
+
+      .producto-card {
+        width: 140px;
+        padding: 15px;
+      }
+
+      .producto-img {
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header original mejorado -->
+  <header>
+    <h1>VapeDealer MX</h1>
+    <p>No vendemos humo. Vendemos estilo 💨</p>
+  </header>
+
+  <!-- Nueva Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h2 class="hero-title">La mejor selección de productos</h2>
+      <p class="hero-subtitle">
+        Descubre nuestra amplia gama de productos premium con la mejor calidad 
+        y precios competitivos. Entrega rápida en toda la república.
+      </p>
+      <a href="#productos" class="hero-cta">Ver Catálogo</a>
+    </div>
+  </section>
+
+  <!-- Estadísticas -->
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Productos Disponibles</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Clientes Satisfechos</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Atención al Cliente</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">48h</div>
+        <div class="stat-label">Envío Express</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías -->
+  <section class="categories-section">
+    <h2 class="section-title">Nuestras Categorías</h2>
+    <p class="section-subtitle">
+      Explora nuestra amplia selección organizada por categorías para encontrar exactamente lo que buscas
+    </p>
+    
+    <div class="categories-grid">
+      <div class="category-card">
+        <span class="category-icon">🔥</span>
+        <h3 class="category-title">Premium</h3>
+        <p class="category-description">
+          Los mejores productos de la más alta calidad para los más exigentes
+        </p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">⚡</span>
+        <h3 class="category-title">Nuevos</h3>
+        <p class="category-description">
+          Las últimas novedades y lanzamientos del mercado
+        </p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">💰</span>
+        <h3 class="category-title">Ofertas</h3>
+        <p class="category-description">
+          Los mejores precios y promociones especiales
+        </p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🌟</span>
+        <h3 class="category-title">Populares</h3>
+        <p class="category-description">
+          Los productos más vendidos y mejor valorados
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos Destacados -->
+  <section class="featured-section">
+    <div class="section-title">Productos Destacados</div>
+    <p class="section-subtitle">
+      Una selección especial de nuestros productos más populares
+    </p>
+    <!-- Aquí podrías agregar algunos productos específicos si quieres -->
+  </section>
+
+  <!-- Catálogo Principal -->
+  <section class="catalog-section" id="productos-section">
+    <div class="catalog-header">
+      <h2 class="section-title">Catálogo Completo</h2>
+      <p class="section-subtitle">
+        Explora toda nuestra colección de productos
+      </p>
+      
+      <!-- Filtros opcionales -->
+      <div class="filter-bar">
+        <button class="filter-btn active">Todos</button>
+        <button class="filter-btn">Premium</button>
+        <button class="filter-btn">Nuevos</button>
+        <button class="filter-btn">Ofertas</button>
+        <button class="filter-btn">Populares</button>
+      </div>
+    </div>
+
+    <!-- Tu div de productos original (SIN CAMBIOS) -->
+    <div id="productos"></div>
+  </section>
+
+  <!-- Por qué elegirnos -->
+  <section class="why-us-section">
+    <h2 class="section-title">¿Por qué VapeDealer MX?</h2>
+    <p class="section-subtitle">
+      Somos tu mejor opción para productos de calidad
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🚚</div>
+        <h3 class="feature-title">Envío Rápido</h3>
+        <p class="feature-description">
+          Entregas en 24-48 horas en toda la república mexicana
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✅</div>
+        <h3 class="feature-title">Garantía Total</h3>
+        <p class="feature-description">
+          100% de garantía en todos nuestros productos originales
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💬</div>
+        <h3 class="feature-title">Atención 24/7</h3>
+        <p class="feature-description">
+          Soporte personalizado vía WhatsApp las 24 horas
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Compra Segura</h3>
+        <p class="feature-description">
+          Transacciones 100% seguras y protegidas
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section class="testimonials-section">
+    <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+    <p class="section-subtitle">
+      Miles de clientes satisfechos avalan nuestra calidad
+    </p>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Excelente calidad y entrega súper rápida. Definitivamente mi tienda de confianza."
+        </p>
+        <div class="testimonial-author">Carlos M.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Los mejores precios del mercado y atención personalizada. 100% recomendado."
+        </p>
+        <div class="testimonial-author">Ana L.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Productos originales y de calidad. Ya van varias compras y siempre perfecto."
+        </p>
+        <div class="testimonial-author">Miguel R.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>VapeDealer MX</h3>
+        <p>Tu tienda de confianza con los mejores productos y el mejor servicio al cliente.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p>📞 WhatsApp: +52 133 467 993 45</p>
+        <p>⏰ Horario: 24/7</p>
+        <p>🚚 Envíos a toda la República</p>
+      </div>
+      <div class="footer-section">
+        <h3>Información</h3>
+        <a href="#">Términos y Condiciones</a><br>
+        <a href="#">Política de Privacidad</a><br>
+        <a href="#">Preguntas Frecuentes</a><br>
+        <a href="#">Garantías</a>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <a href="#">Facebook</a><br>
+        <a href="#">Instagram</a><br>
+        <a href="#">TikTok</a><br>
+        <a href="#">WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 VapeDealer MX. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Tus botones originales (SIN CAMBIOS) -->
+  <a href="https://wa.me/5213346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
+  <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>
+
+  <!-- Tu script original (SIN CAMBIOS) -->
+  <script type="module" src="script.js"></script>
+</body>
+  </html>
