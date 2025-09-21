@@ -1,169 +1,889 @@
-<!DOCTYPE html><html lang="es"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  <title>Admin VapeDealer</title></head><body style="font-family: Arial; background: #111; color: white; padding: 20px;">  <h1>Panel de Administración</h1><input type="text" id="nombre" placeholder="Nombre del producto" /><br><br>
-
-<input type="text" id="precio" placeholder="Precio" /><br><br>
-
-<input type="text" id="descripcion" placeholder="Descripción" /><br><br>
-
-<input type="text" id="imagen" placeholder="URL de imagen (Ejemplo: https://i.imgur.com/xxxxxxx.png)"
-
-title="Sube la imagen a Imgur y pega aquí el link directo que termina en .png o .jpg" /><br><br>
-
-<button id="agregar">Agregar producto</button>
-
-  <h2>Productos actuales</h2>  <div id="lista-productos"></div>  <script type="module">
-  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  
-
-  
-    const firebaseConfig = {
-  
-      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
-  
-      authDomain: "vapedealerstore.firebaseapp.com",
-  
-      projectId: "vapedealerstore",
-  
-      storageBucket: "vapedealerstore.appspot.com",
-  
-      messagingSenderId: "669843415263",
-  
-      appId: "1:669843415263:web:27c57bdfa10606e180096a"
-  
-    };
-  
-
-  
-    const app = initializeApp(firebaseConfig);
-  
-    const db = getFirestore(app);
-  
-    const productosRef = collection(db, "productos");
-  
-
-  
-    const nombre = document.getElementById("nombre");
-  
-    const precio = document.getElementById("precio");
-  
-    const descripcion = document.getElementById("descripcion");
-  
-    const imagen = document.getElementById("imagen");
-  
-    const lista = document.getElementById("lista-productos");
-  
-
-  
-    document.getElementById("agregar").addEventListener("click", async () => {
-  
-      if (!nombre.value || !precio.value || !descripcion.value || !imagen.value) {
-  
-        alert("Llena todos los campos.");
-  
-        return;
-  
-      }
-  
-
-  
-      try {
-  
-        await addDoc(productosRef, {
-  
-          nombre: nombre.value,
-  
-          precio: precio.value,
-  
-          descripcion: descripcion.value,
-  
-          imagen: imagen.value
-  
-        });
-  
-        alert("Producto agregado");
-  
-        nombre.value = "";
-  
-        precio.value = "";
-  
-        descripcion.value = "";
-  
-        imagen.value = "";
-  
-        cargarProductos();
-  
-      } catch (e) {
-  
-        console.error("Error al agregar producto:", e);
-  
-        alert("Error al agregar producto");
-  
-      }
-  
-    });
-  
-
-  
-    async function cargarProductos() {
-  
-      lista.innerHTML = "";
-  
-      const querySnapshot = await getDocs(productosRef);
-  
-      querySnapshot.forEach((docu) => {
-  
-        const data = docu.data();
-  
-        const div = document.createElement("div");
-  
-        div.innerHTML = `
-  
-          <hr>
-  
-          <strong>${data.nombre}</strong><br>
-  
-          ${data.precio}<br>
-  
-          ${data.descripcion}<br>
-  
-          <img src="${data.imagen}" alt="${data.nombre}" style="width:100px; border-radius: 8px; margin-top: 6px;"><br>
-  
-          <button onclick="eliminarProducto('${docu.id}')">Eliminar</button><br><br>
-  
-        `;
-  
-        lista.appendChild(div);
-  
-      });
-  
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración - VapeDealer MX</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  
 
-  
-    window.eliminarProducto = async function (id) {
-  
-      try {
-  
-        await deleteDoc(doc(db, "productos", id));
-  
-        alert("Producto eliminado");
-  
-        cargarProductos();
-  
-      } catch (e) {
-  
-        console.error("Error al eliminar:", e);
-  
-        alert("No se pudo eliminar");
-  
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%);
+      color: white;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header del panel */
+    .admin-header {
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      padding: 25px 30px;
+      border-bottom: 2px solid rgba(37, 211, 102, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .admin-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .admin-logo {
+      font-size: 1.8em;
+      font-weight: 700;
+      background: linear-gradient(45deg, #25D366 0%, #20b358 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .admin-subtitle {
+      color: #b0b0b0;
+      font-size: 0.9em;
+      font-weight: 400;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9em;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .logout-btn {
+      padding: 10px 20px;
+      background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.9em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    /* Container principal */
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 30px;
+      display: grid;
+      gap: 40px;
+    }
+
+    /* Sección de agregar producto */
+    .add-product-section {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(45, 45, 45, 0.9));
+      border-radius: 20px;
+      padding: 35px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-icon {
+      font-size: 1.8em;
+      color: #25D366;
+    }
+
+    .section-title {
+      font-size: 1.5em;
+      font-weight: 600;
+      color: white;
+    }
+
+    .section-description {
+      color: #b0b0b0;
+      font-size: 0.95em;
+      margin-top: 5px;
+      font-weight: 300;
+    }
+
+    /* Formulario mejorado */
+    .product-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      color: #d0d0d0;
+      font-size: 0.95em;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-input {
+      padding: 15px 18px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      font-size: 1em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #25D366;
+      background: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .form-input::placeholder {
+      color: #666;
+      font-weight: 300;
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .image-input-group {
+      position: relative;
+    }
+
+    .image-preview {
+      margin-top: 15px;
+      padding: 20px;
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .image-preview.has-image {
+      border-color: #25D366;
+      background: rgba(37, 211, 102, 0.05);
+    }
+
+    .preview-image {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .preview-placeholder {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    .btn-primary {
+      grid-column: 1 / -1;
+      padding: 16px 30px;
+      background: linear-gradient(45deg, #25D366 0%, #20b358 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.25);
+      position: relative;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(37, 211, 102, 0.35);
+      filter: brightness(1.1);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Sección de productos existentes */
+    .products-section {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(45, 45, 45, 0.9));
+      border-radius: 20px;
+      padding: 35px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .products-count {
+      background: rgba(37, 211, 102, 0.2);
+      color: #25D366;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 500;
+    }
+
+    .search-box {
+      padding: 12px 18px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      font-size: 0.9em;
+      width: 250px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #25D366;
+      width: 300px;
+    }
+
+    /* Lista de productos */
+    #lista-productos {
+      display: grid;
+      gap: 20px;
+    }
+
+    .product-item {
+      background: linear-gradient(135deg, rgba(20, 20, 20, 0.8), rgba(35, 35, 35, 0.6));
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 211, 102, 0.3);
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.1);
+    }
+
+    .product-content {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .product-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .product-details {
+      min-width: 0;
+    }
+
+    .product-name {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .product-price {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #25D366;
+      margin-bottom: 12px;
+    }
+
+    .product-description {
+      color: #b0b0b0;
+      font-size: 0.95em;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-delete {
+      padding: 10px 18px;
+      background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.9em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-delete:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    /* Estados y notificaciones */
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(37, 211, 102, 0.3);
+      border-top: 3px solid #25D366;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .empty-icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .notification {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      padding: 15px 25px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: rgba(37, 211, 102, 0.9);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+    }
+
+    .notification.error {
+      background: rgba(255, 107, 107, 0.9);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 20px 15px;
       }
-  
-    };
-  
 
-  
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .product-form {
+        grid-template-columns: 1fr;
+      }
+
+      .product-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .product-image {
+        width: 100%;
+        height: 200px;
+        justify-self: center;
+      }
+
+      .product-actions {
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .search-box:focus {
+        width: 100%;
+      }
+
+      .notification {
+        right: 15px;
+        left: 15px;
+        transform: translateY(-100px);
+      }
+
+      .notification.show {
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-header {
+        padding: 20px 15px;
+      }
+
+      .add-product-section,
+      .products-section {
+        padding: 25px 20px;
+      }
+
+      .admin-logo {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header del panel -->
+  <header class="admin-header">
+    <div class="header-content">
+      <div class="admin-title">
+        <div>
+          <div class="admin-logo">VapeDealer MX</div>
+          <div class="admin-subtitle">Panel de Administración</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" class="btn-secondary">
+          <span>🏪</span>
+          <span>Ver tienda</span>
+        </a>
+        <button onclick="logout()" class="logout-btn">
+          <span>🚪</span>
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container principal -->
+  <div class="admin-container">
+    <!-- Sección de agregar producto -->
+    <section class="add-product-section">
+      <div class="section-header">
+        <div class="section-icon">➕</div>
+        <div>
+          <h2 class="section-title">Agregar nuevo producto</h2>
+          <p class="section-description">Completa todos los campos para añadir un producto al catálogo</p>
+        </div>
+      </div>
+
+      <form class="product-form" id="product-form">
+        <div class="form-group">
+          <label class="form-label">
+            <span>📦</span>
+            <span>Nombre del producto</span>
+          </label>
+          <input 
+            type="text" 
+            id="nombre" 
+            class="form-input"
+            placeholder="Ej: Vape Premium XL"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>💰</span>
+            <span>Precio</span>
+          </label>
+          <input 
+            type="text" 
+            id="precio" 
+            class="form-input"
+            placeholder="Ej: $599 MXN"
+            required
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">
+            <span>📝</span>
+            <span>Descripción</span>
+          </label>
+          <input 
+            type="text" 
+            id="descripcion" 
+            class="form-input"
+            placeholder="Describe las características principales del producto..."
+            required
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">
+            <span>🖼️</span>
+            <span>URL de la imagen</span>
+          </label>
+          <div class="image-input-group">
+            <input 
+              type="text" 
+              id="imagen" 
+              class="form-input"
+              placeholder="https://i.imgur.com/ejemplo.jpg"
+              title="Sube la imagen a Imgur y pega aquí el enlace directo"
+              required
+            />
+            <div class="image-preview" id="image-preview">
+              <div class="preview-placeholder">
+                📸 La vista previa de la imagen aparecerá aquí
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="agregar" class="btn-primary">
+          <span>✨ Agregar producto al catálogo</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Sección de productos existentes -->
+    <section class="products-section">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div>
+          <h2 class="section-title">Productos en el catálogo</h2>
+          <p class="section-description">Gestiona todos los productos de tu tienda</p>
+        </div>
+      </div>
+
+      <div class="products-header">
+        <div class="products-count" id="products-count">
+          0 productos
+        </div>
+        <input 
+          type="text" 
+          class="search-box" 
+          placeholder="🔍 Buscar productos..."
+          id="search-products"
+        />
+      </div>
+
+      <div id="lista-productos">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando productos...</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Notificaciones -->
+  <div id="notification" class="notification"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJZPTFlDus1LOHkWfavrgy8S-x7xpmzdI",
+      authDomain: "vapedealerstore.firebaseapp.com",
+      projectId: "vapedealerstore",
+      storageBucket: "vapedealerstore.appspot.com",
+      messagingSenderId: "669843415263",
+      appId: "1:669843415263:web:27c57bdfa10606e180096a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productosRef = collection(db, "productos");
+
+    // Referencias DOM
+    const nombre = document.getElementById("nombre");
+    const precio = document.getElementById("precio");
+    const descripcion = document.getElementById("descripcion");
+    const imagen = document.getElementById("imagen");
+    const lista = document.getElementById("lista-productos");
+    const productsCount = document.getElementById("products-count");
+    const searchBox = document.getElementById("search-products");
+    const imagePreview = document.getElementById("image-preview");
+
+    let allProducts = [];
+    let isLoading = false;
+
+    // Funciones de notificación mejoradas
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 4000);
+    }
+
+    // Preview de imagen
+    imagen.addEventListener('input', () => {
+      const url = imagen.value.trim();
+      if (url) {
+        imagePreview.innerHTML = `
+          <img src="${url}" alt="Preview" class="preview-image" 
+               onerror="this.parentElement.innerHTML='<div class=\\'preview-placeholder\\'>❌ No se pudo cargar la imagen</div>'"
+               onload="this.parentElement.classList.add('has-image')"
+          />
+          <div style="color: #25D366; font-size: 0.9em;">✅ Imagen cargada correctamente</div>
+        `;
+      } else {
+        imagePreview.innerHTML = '<div class="preview-placeholder">📸 La vista previa de la imagen aparecerá aquí</div>';
+        imagePreview.classList.remove('has-image');
+      }
+    });
+
+    // Evento del botón agregar (manteniendo la lógica original)
+    document.getElementById("agregar").addEventListener("click", async () => {
+      if (!nombre.value || !precio.value || !descripcion.value || !imagen.value) {
+        showNotification("Llena todos los campos.", "error");
+        return;
+      }
+
+      const button = document.getElementById("agregar");
+      button.classList.add('loading');
+      button.innerHTML = '<span>⏳ Agregando producto...</span>';
+
+      try {
+        await addDoc(productosRef, {
+          nombre: nombre.value,
+          precio: precio.value,
+          descripcion: descripcion.value,
+          imagen: imagen.value
+        });
+        
+        showNotification("Producto agregado", "success");
+        
+        // Limpiar campos
+        nombre.value = "";
+        precio.value = "";
+        descripcion.value = "";
+        imagen.value = "";
+        
+        // Limpiar preview
+        imagePreview.innerHTML = '<div class="preview-placeholder">📸 La vista previa de la imagen aparecerá aquí</div>';
+        imagePreview.classList.remove('has-image');
+        
+        cargarProductos();
+      } catch (e) {
+        console.error("Error al agregar producto:", e);
+        showNotification("Error al agregar producto", "error");
+      } finally {
+        button.classList.remove('loading');
+        button.innerHTML = '<span>✨ Agregar producto al catálogo</span>';
+      }
+    });
+
+    // Cargar productos (manteniendo la lógica original pero con mejor diseño)
+    async function cargarProductos() {
+      lista.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Cargando productos...</p></div>';
+      
+      try {
+        const querySnapshot = await getDocs(productosRef);
+        allProducts = [];
+        
+        querySnapshot.forEach((docu) => {
+          const data = docu.data();
+          allProducts.push({
+            id: docu.id,
+            ...data
+          });
+        });
+
+        actualizarVistaProductos(allProducts);
+        actualizarContador(allProducts.length);
+      } catch (error) {
+        console.error("Error cargando productos:", error);
+        lista.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>Error al cargar productos</h3><p>Intenta recargar la página</p></div>';
+      }
+    }
+
+    // Actualizar vista de productos
+    function actualizarVistaProductos(products) {
+      if (products.length === 0) {
+        lista.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><h3>No hay productos</h3><p>Agrega tu primer producto usando el formulario de arriba</p></div>';
+        return;
+      }
+
+      lista.innerHTML = products.map(product => `
+        <div class="product-item" data-id="${product.id}">
+          <div class="product-content">
+            <img src="${product.imagen}" alt="${product.nombre}" class="product-image" 
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"120\\" height=\\"120\\" viewBox=\\"0 0 120 120\\"><rect width=\\"120\\" height=\\"120\\" fill=\\"%23333\\"/><text x=\\"60\\" y=\\"60\\" text-anchor=\\"middle\\" dy=\\".3em\\" fill=\\"white\\">📦</text></svg>'" />
+            
+            <div class="product-details">
+              <h3 class="product-name">${product.nombre}</h3>
+              <div class="product-price">${product.precio}</div>
+              <p class="product-description">${product.descripcion}</p>
+            </div>
+            
+            <div class="product-actions">
+              <button onclick="eliminarProducto('${product.id}')" class="btn-delete">
+                <span>🗑️</span>
+                <span>Eliminar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Actualizar contador
+    function actualizarContador(count) {
+      productsCount.textContent = `${count} producto${count !== 1 ? 's' : ''}`;
+    }
+
+    // Búsqueda de productos
+    searchBox.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        actualizarVistaProductos(allProducts);
+        actualizarContador(allProducts.length);
+      } else {
+        const filtered = allProducts.filter(product => 
+          product.nombre.toLowerCase().includes(searchTerm) ||
+          product.descripcion.toLowerCase().includes(searchTerm) ||
+          product.precio.toLowerCase().includes(searchTerm)
+        );
+        actualizarVistaProductos(filtered);
+        actualizarContador(filtered.length);
+      }
+    });
+
+    // Eliminar producto (manteniendo la lógica original)
+    window.eliminarProducto = async function (id) {
+      if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+        return;
+      }
+
+      const productItem = document.querySelector(`[data-id="${id}"]`);
+      if (productItem) {
+        productItem.style.opacity = '0.5';
+      }
+
+      try {
+        await deleteDoc(doc(db, "productos", id));
+        showNotification("Producto eliminado", "success");
+        cargarProductos();
+      } catch (e) {
+        console.error("Error al eliminar:", e);
+        showNotification("No se pudo eliminar", "error");
+        if (productItem) {
+          productItem.style.opacity = '1';
+        }
+      }
+    };
+
+    // Función de logout
+    window.logout = function() {
+      if (confirm('¿Seguro que quieres cerrar sesión?')) {
+        window.location.href = 'login.html';
+      }
+    };
+
+    // Cargar productos al iniciar (manteniendo la funcionalidad original)
     cargarProductos();
-  
-  </script></body></html>
+  </script>
+</body>
+</html>
