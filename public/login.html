@@ -24,7 +24,6 @@
       overflow: hidden;
     }
 
-    /* Fondo animado sutil */
     body::before {
       content: '';
       position: absolute;
@@ -152,13 +151,13 @@
       margin-top: 10px;
     }
 
-    .login-button:hover {
+    .login-button:hover:not(.loading) {
       transform: translateY(-3px);
       box-shadow: 0 12px 35px rgba(37, 211, 102, 0.35);
       filter: brightness(1.1);
     }
 
-    .login-button:active {
+    .login-button:active:not(.loading) {
       transform: translateY(-1px);
     }
 
@@ -173,7 +172,7 @@
       transition: left 0.5s ease;
     }
 
-    .login-button:hover::before {
+    .login-button:hover:not(.loading)::before {
       left: 100%;
     }
 
@@ -254,30 +253,6 @@
       margin-right: 8px;
     }
 
-    /* Responsive */
-    @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-
-      .login-box {
-        padding: 40px 30px;
-        border-radius: 20px;
-      }
-
-      .login-logo {
-        font-size: 1.9em;
-      }
-
-      .back-to-store {
-        top: 20px;
-        left: 20px;
-        font-size: 0.8em;
-        padding: 8px 12px;
-      }
-    }
-
-    /* Estados de loading */
     .loading {
       opacity: 0.7;
       cursor: not-allowed;
@@ -302,6 +277,28 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+
+      .login-box {
+        padding: 40px 30px;
+        border-radius: 20px;
+      }
+
+      .login-logo {
+        font-size: 1.9em;
+      }
+
+      .back-to-store {
+        top: 20px;
+        left: 20px;
+        font-size: 0.8em;
+        padding: 8px 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -320,21 +317,21 @@
 
       <form id="login-form">
         <div class="form-group">
-          <label for="usuario" class="form-label">Usuario</label>
+          <label for="email" class="form-label">Correo Electrónico</label>
           <input 
-            id="usuario" 
-            type="text" 
+            id="email" 
+            type="email" 
             class="form-input"
-            placeholder="Ingresa tu usuario" 
-            autocomplete="username"
+            placeholder="admin@vapedealer.mx" 
+            autocomplete="email"
             required
           />
         </div>
 
         <div class="form-group">
-          <label for="contraseña" class="form-label">Contraseña</label>
+          <label for="password" class="form-label">Contraseña</label>
           <input 
-            id="contraseña" 
+            id="password" 
             type="password" 
             class="form-input"
             placeholder="Ingresa tu contraseña" 
@@ -343,7 +340,7 @@
           />
         </div>
 
-        <button type="submit" id="ingresar" class="login-button">
+        <button type="submit" id="login-btn" class="login-button">
           Acceder al panel
         </button>
 
@@ -359,101 +356,150 @@
       </div>
     </div>
   </div>
+  
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  <script>
-    // Mejorar el JavaScript original manteniendo funcionalidad
-    document.getElementById("login-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      handleLogin();
-    });
+    // Configuración de Supabase
+    const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    document.getElementById("ingresar").addEventListener("click", (e) => {
-      if (e.target.closest('form')) return; // Evitar doble ejecución
-      e.preventDefault();
-      handleLogin();
-    });
+    // Referencias a elementos
+    const loginForm = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("login-btn");
+    const messageDiv = document.getElementById("mensaje");
 
-    function handleLogin() {
-      const button = document.getElementById("ingresar");
-      const messageDiv = document.getElementById("mensaje");
-      const userInput = document.getElementById("usuario");
-      const passInput = document.getElementById("contraseña");
+    // ========== VERIFICAR SI YA ESTÁ AUTENTICADO ==========
+    async function checkExistingSession() {
+      const { data: { session } } = await supabase.auth.getSession();
       
-      const user = userInput.value.trim();
-      const pass = passInput.value.trim();
+      if (session) {
+        // Ya hay una sesión activa, verificar rol
+        const userRole = session.user.user_metadata?.role;
+        
+        if (userRole === 'dashboard_user' || userRole === 'admin') {
+          showMessage("Ya tienes sesión activa. Redirigiendo...", "success");
+          setTimeout(() => {
+            window.location.href = "admin.html";
+          }, 1000);
+        }
+      }
+    }
 
-      // Validación básica
-      if (!user || !pass) {
+    // ========== FUNCIÓN DE LOGIN ==========
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
         showMessage("Por favor completa todos los campos", "error");
         return;
       }
 
-      // Mostrar estado de carga
-      button.classList.add("loading");
-      button.textContent = "Verificando...";
+      // Validar formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage("Por favor ingresa un email válido", "error");
+        return;
+      }
+
+      loginBtn.classList.add("loading");
+      loginBtn.textContent = "Verificando...";
       messageDiv.innerHTML = "";
 
-      // Simular delay de verificación (más realista)
-      setTimeout(() => {
-        const adminUser = "admin";
-        const adminPass = "1234";
+      try {
+        // Intentar login con Supabase Auth
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
 
-        if (user === adminUser && pass === adminPass) {
+        if (error) throw error;
+
+        // Verificar que el usuario tenga el rol correcto
+        const userRole = data.user.user_metadata?.role;
+        
+        console.log('Usuario autenticado:', data.user.email);
+        console.log('Rol del usuario:', userRole);
+
+        if (userRole === 'dashboard_user' || userRole === 'admin') {
           showMessage("¡Acceso concedido! Redirigiendo...", "success");
           
-          // Redirección con delay para mejor UX
+          // Guardar información de sesión
+          sessionStorage.setItem('admin_logged_in', 'true');
+          sessionStorage.setItem('admin_email', data.user.email);
+          
           setTimeout(() => {
             window.location.href = "admin.html";
           }, 1500);
-          
         } else {
-          showMessage("Usuario o contraseña incorrectos. Verifica tus datos e intenta nuevamente.", "error");
-          
-          // Reset form con delay
-          setTimeout(() => {
-            passInput.value = "";
-            passInput.focus();
-          }, 500);
+          // Usuario no tiene permisos de admin
+          await supabase.auth.signOut();
+          showMessage("No tienes permisos de administrador", "error");
         }
 
-        // Restaurar botón
-        button.classList.remove("loading");
-        button.textContent = "Acceder al panel";
-      }, 1000);
+      } catch (err) {
+        console.error("Error en login:", err);
+        
+        let errorMessage = "Error de autenticación";
+        
+        if (err.message.includes("Invalid login credentials")) {
+          errorMessage = "Email o contraseña incorrectos";
+        } else if (err.message.includes("Email not confirmed")) {
+          errorMessage = "Por favor confirma tu email primero";
+        } else if (err.message.includes("network")) {
+          errorMessage = "Error de conexión. Verifica tu internet";
+        }
+        
+        showMessage(errorMessage, "error");
+        passwordInput.value = "";
+        
+      } finally {
+        loginBtn.classList.remove("loading");
+        loginBtn.textContent = "Acceder al panel";
+      }
     }
 
+    // ========== MOSTRAR MENSAJES ==========
     function showMessage(text, type) {
-      const messageDiv = document.getElementById("mensaje");
       messageDiv.className = type === "error" ? "error-message" : "success-message";
       messageDiv.textContent = text;
     }
 
-    // Mejorar UX con enter key
-    document.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        const button = document.getElementById("ingresar");
-        if (!button.classList.contains("loading")) {
-          handleLogin();
-        }
-      }
-    });
-
-    // Focus automático en el primer campo
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("usuario").focus();
-    });
-
-    // Limpiar mensajes cuando el usuario empiece a escribir
-    document.getElementById("usuario").addEventListener("input", clearMessages);
-    document.getElementById("contraseña").addEventListener("input", clearMessages);
-
+    // ========== LIMPIAR MENSAJES ==========
     function clearMessages() {
-      const messageDiv = document.getElementById("mensaje");
       if (messageDiv.textContent) {
         messageDiv.textContent = "";
         messageDiv.className = "";
       }
     }
+
+    // ========== EVENT LISTENERS ==========
+    loginForm.addEventListener("submit", handleLogin);
+    emailInput.addEventListener("input", clearMessages);
+    passwordInput.addEventListener("input", clearMessages);
+
+    // Enter key en cualquier campo
+    document.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !loginBtn.classList.contains("loading")) {
+        e.preventDefault();
+        loginForm.dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // ========== INICIALIZACIÓN ==========
+    window.addEventListener('DOMContentLoaded', () => {
+      emailInput.focus();
+      checkExistingSession();
+    });
+
+    // Exponer para debugging
+    window.supabase = supabase;
   </script>
 </body>
-  </html>
+</html>
