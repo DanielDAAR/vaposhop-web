@@ -466,6 +466,12 @@
       border-radius: 10px;
       background: #222;
       margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 0.9em;
+      text-align: center;
     }
 
     .producto-nombre {
@@ -645,6 +651,26 @@
       height: 30px;
       cursor: pointer;
       z-index: 999;
+    }
+
+    /* Estilos para mensajes de carga y error */
+    .loading-message {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+      color: #25D366;
+      grid-column: 1 / -1;
+    }
+
+    .error-message {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+      color: #ff4444;
+      background: rgba(255, 68, 68, 0.1);
+      border-radius: 10px;
+      margin: 20px;
+      grid-column: 1 / -1;
     }
 
     /* Responsive mejorado */
@@ -857,7 +883,7 @@
         Descubre nuestra amplia gama de productos premium con la mejor calidad 
         y precios competitivos. Entrega rápida en toda la república.
       </p>
-      <a href="#productos" class="hero-cta">Ver Catálogo</a>
+      <a href="#productos-section" class="hero-cta">Ver Catálogo</a>
     </div>
   </section>
 
@@ -947,7 +973,9 @@
       </div>
     </div>
 
-    <div id="productos"></div>
+    <div id="productos">
+      <div class="loading-message">Cargando productos...</div>
+    </div>
   </section>
 
   <!-- Por qué elegirnos -->
@@ -1058,8 +1086,96 @@
   <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
   <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>
 
-  <script type="module" src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Configuración de Supabase
+    const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
+
+    // Inicializar Supabase
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Elementos del DOM
+    const productosContainer = document.getElementById('productos');
+
+    // Función para crear placeholder de imagen
+    function crearPlaceholderImagen(nombre) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'producto-img';
+      placeholder.textContent = '🖼️ ' + (nombre || 'Imagen no disponible');
+      return placeholder;
+    }
+
+    // Función para cargar productos desde Supabase
+    async function cargarProductos() {
+      try {
+        // Mostrar mensaje de carga
+        productosContainer.innerHTML = '<div class="loading-message">Cargando productos...</div>';
+
+        // Obtener productos de Supabase
+        const { data: productos, error } = await supabase
+          .from('productos')
+          .select('*')
+          .order('nombre');
+
+        if (error) {
+          throw error;
+        }
+
+        // Limpiar contenedor
+        productosContainer.innerHTML = '';
+
+        // Verificar si hay productos
+        if (!productos || productos.length === 0) {
+          productosContainer.innerHTML = '<div class="error-message">No se encontraron productos</div>';
+          return;
+        }
+
+        // Crear tarjetas de productos
+        productos.forEach(producto => {
+          const productoCard = document.createElement('div');
+          productoCard.className = 'producto-card';
+          
+          // Crear contenido de la tarjeta
+          const contenido = `
+            <h3 class="producto-nombre">${producto.nombre}</h3>
+            <div class="producto-precio">$${producto.precio}</div>
+            <p class="producto-descripcion">${producto.descripcion || 'Sin descripción disponible'}</p>
+          `;
+          
+          productoCard.innerHTML = contenido;
+          
+          // Manejar la imagen de manera segura
+          if (producto.img_url) {
+            const img = document.createElement('img');
+            img.src = producto.img_url;
+            img.alt = producto.nombre;
+            img.className = 'producto-img';
+            img.onerror = function() {
+              // Si la imagen falla al cargar, reemplazar con placeholder
+              const placeholder = crearPlaceholderImagen(producto.nombre);
+              productoCard.replaceChild(placeholder, img);
+            };
+            productoCard.insertBefore(img, productoCard.firstChild);
+          } else {
+            // Si no hay URL de imagen, usar placeholder
+            const placeholder = crearPlaceholderImagen(producto.nombre);
+            productoCard.insertBefore(placeholder, productoCard.firstChild);
+          }
+          
+          productosContainer.appendChild(productoCard);
+        });
+
+      } catch (error) {
+        console.error('Error al cargar productos:', error);
+        productosContainer.innerHTML = `
+          <div class="error-message">
+            Error al cargar los productos: ${error.message}
+          </div>
+        `;
+      }
+    }
+
     // Funcionalidad del menú lateral
     const menuToggle = document.getElementById('menuToggle');
     const sideMenu = document.getElementById('sideMenu');
@@ -1131,6 +1247,24 @@
             block: 'start'
           });
         }
+      });
+    });
+
+    // Cargar productos cuando la página esté lista
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarProductos();
+    });
+
+    // Manejo de filtros
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remover clase active de todos los botones
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Agregar clase active al botón clickeado
+        button.classList.add('active');
+        // Recargar productos (aquí puedes implementar filtrado específico)
+        cargarProductos();
       });
     });
   </script>

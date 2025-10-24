@@ -581,6 +581,32 @@
           />
         </div>
 
+        <div class="form-group">
+          <label class="form-label">
+            <span>📊</span>
+            <span>Stock inicial</span>
+          </label>
+          <input 
+            type="number" 
+            id="stock" 
+            class="form-input"
+            placeholder="Ej: 10"
+            min="0"
+            value="10"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>📁</span>
+            <span>Categoría</span>
+          </label>
+          <select id="categoria" class="form-select">
+            <option value="">Seleccionar categoría...</option>
+          </select>
+        </div>
+
         <div class="form-group full-width">
           <label class="form-label">
             <span>📝</span>
@@ -666,8 +692,10 @@
     // Referencias a elementos del DOM
     const nombre = document.getElementById("nombre");
     const precio = document.getElementById("precio");
+    const stock = document.getElementById("stock");
     const descripcion = document.getElementById("descripcion");
     const imagen = document.getElementById("imagen");
+    const categoria = document.getElementById("categoria");
     const agregar = document.getElementById("agregar");
     const lista = document.getElementById("lista-productos");
     const productsCount = document.getElementById("products-count");
@@ -677,49 +705,7 @@
 
     let allProducts = [];
     let currentUser = null;
-
-    // ========== VERIFICAR AUTENTICACIÓN ==========
-    async function verificarAutenticacion() {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
-        
-        if (!session) {
-          showNotification("⚠️ Sesión no encontrada. Redirigiendo al login...", "error");
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 2000);
-          return false;
-        }
-
-        currentUser = session.user;
-        const userRole = session.user.user_metadata?.role;
-        
-        console.log('✅ Usuario autenticado:', session.user.email);
-        console.log('📌 Rol:', userRole);
-        
-        // Actualizar info de usuario en header
-        userInfo.textContent = `👤 ${session.user.email}`;
-        
-        if (userRole !== 'dashboard_user' && userRole !== 'admin') {
-          showNotification("⚠️ No tienes permisos de administrador", "error");
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 2000);
-          return false;
-        }
-        
-        return true;
-      } catch (error) {
-        console.error('❌ Error verificando autenticación:', error);
-        showNotification("Error de autenticación", "error");
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 2000);
-        return false;
-      }
-    }
+    let categoriasCache = [];
 
     // ========== FUNCIONES DE NOTIFICACIÓN ==========
     function showNotification(message, type = 'success') {
@@ -750,6 +736,75 @@
       }
     });
 
+    // ========== CARGAR CATEGORÍAS ==========
+    async function cargarCategorias() {
+      try {
+        const { data: categorias, error } = await supabase
+          .from('categorias')
+          .select('id_categoria, nombre')
+          .order('nombre');
+
+        if (error) {
+          console.warn('⚠️ Error cargando categorías:', error);
+          // Si hay error de RLS, usar categorías por defecto
+          categoriasCache = [
+            { id_categoria: '1', nombre: 'Premium' },
+            { id_categoria: '2', nombre: 'Nuevos' },
+            { id_categoria: '3', nombre: 'Ofertas' },
+            { id_categoria: '4', nombre: 'Populares' }
+          ];
+        } else {
+          categoriasCache = categorias || [];
+        }
+
+        // Actualizar dropdown de categorías
+        categoria.innerHTML = '<option value="">Seleccionar categoría...</option>';
+        categoriasCache.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat.id_categoria;
+          option.textContent = cat.nombre;
+          categoria.appendChild(option);
+        });
+
+        console.log('✅ Categorías cargadas:', categoriasCache.length);
+
+      } catch (error) {
+        console.error('❌ Error cargando categorías:', error);
+        categoriasCache = [];
+      }
+    }
+
+    // ========== OBTENER CATEGORÍA POR DEFECTO ==========
+    async function obtenerCategoriaPorDefecto() {
+      try {
+        // Si hay categorías en cache, usar la primera
+        if (categoriasCache.length > 0) {
+          return categoriasCache[0].id_categoria;
+        }
+
+        // Intentar obtener categorías de la base de datos
+        const { data: categorias, error } = await supabase
+          .from('categorias')
+          .select('id_categoria')
+          .limit(1);
+
+        if (error) throw error;
+
+        if (categorias && categorias.length > 0) {
+          return categorias[0].id_categoria;
+        }
+
+        // Si no hay categorías, usar un ID por defecto
+        console.warn('⚠️ No se encontraron categorías, usando ID por defecto');
+        return '1';
+
+      } catch (error) {
+        console.error('❌ Error obteniendo categoría por defecto:', error);
+        // En caso de error, usar un ID por defecto
+        return '1';
+      }
+    }
+
     // ========== FUNCIÓN PARA CARGAR PRODUCTOS ==========
     async function cargarProductos() {
       lista.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Cargando productos...</p></div>';
@@ -757,7 +812,12 @@
       try {
         const { data: productos, error } = await supabase
           .from('productos')
-          .select('*')
+          .select(`
+            *,
+            categorias: id_categoria (
+              nombre
+            )
+          `)
           .order('id_producto', { ascending: false });
 
         if (error) throw error;
@@ -817,6 +877,10 @@
             <div class="product-details">
               <h3 class="product-name">${escapeHtml(producto.nombre)}</h3>
               <div class="product-price">$${parseFloat(producto.precio).toFixed(2)} MXN</div>
+              <div style="color: #888; font-size: 0.9em; margin-bottom: 8px;">
+                📊 Stock: ${producto.stock || 0} unidades
+                ${producto.categorias ? `<br>📁 ${producto.categorias.nombre}` : ''}
+              </div>
               <p class="product-description">${escapeHtml(producto.descripcion)}</p>
             </div>
             
@@ -868,6 +932,18 @@
         return false;
       }
 
+      if (!stock.value || parseInt(stock.value) < 0) {
+        showNotification("Por favor, ingresa un stock válido", "error");
+        stock.focus();
+        return false;
+      }
+
+      if (!categoria.value) {
+        showNotification("Por favor, selecciona una categoría", "error");
+        categoria.focus();
+        return false;
+      }
+
       if (!descripcion.value.trim()) {
         showNotification("Por favor, ingresa una descripción", "error");
         descripcion.focus();
@@ -903,7 +979,9 @@
           nombre: nombre.value.trim(),
           precio: parseFloat(precio.value),
           descripcion: descripcion.value.trim(),
-          imagen_url: imagen.value.trim()
+          imagen_url: imagen.value.trim(),
+          stock: parseInt(stock.value),
+          id_categoria: categoria.value
         };
 
         console.log('📤 Enviando producto:', nuevoProducto);
@@ -920,8 +998,10 @@
         // Limpiar formulario
         nombre.value = "";
         precio.value = "";
+        stock.value = "10";
         descripcion.value = "";
         imagen.value = "";
+        categoria.value = "";
 
         // Limpiar preview
         imagePreview.innerHTML = '<div class="preview-placeholder">📸 La vista previa de la imagen aparecerá aquí</div>';
@@ -982,6 +1062,49 @@
       }
     };
 
+    // ========== VERIFICAR AUTENTICACIÓN ==========
+    async function verificarAutenticacion() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+        
+        if (!session) {
+          showNotification("⚠️ Sesión no encontrada. Redirigiendo al login...", "error");
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+          return false;
+        }
+
+        currentUser = session.user;
+        const userRole = session.user.user_metadata?.role;
+        
+        console.log('✅ Usuario autenticado:', session.user.email);
+        console.log('📌 Rol:', userRole);
+        
+        // Actualizar info de usuario en header
+        userInfo.textContent = `👤 ${session.user.email}`;
+        
+        if (userRole !== 'dashboard_user' && userRole !== 'admin') {
+          showNotification("⚠️ No tienes permisos de administrador", "error");
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+          return false;
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('❌ Error verificando autenticación:', error);
+        showNotification("Error de autenticación", "error");
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+        return false;
+      }
+    }
+
     // ========== FUNCIÓN DE LOGOUT ==========
     window.logout = async function() {
       if (confirm('¿Seguro que quieres cerrar sesión?')) {
@@ -1008,21 +1131,6 @@
       }
     };
 
-    // ========== TECLAS DE ACCESO RÁPIDO ==========
-    document.addEventListener('keydown', (e) => {
-      // Ctrl/Cmd + Enter para agregar producto
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        e.preventDefault();
-        agregar.click();
-      }
-      
-      // Escape para limpiar búsqueda
-      if (e.key === 'Escape' && document.activeElement === searchBox) {
-        searchBox.value = '';
-        searchBox.dispatchEvent(new Event('input'));
-      }
-    });
-
     // ========== VERIFICAR CONEXIÓN A SUPABASE ==========
     async function verificarConexion() {
       try {
@@ -1041,43 +1149,6 @@
       }
     }
 
-    // ========== SUSCRIPCIÓN A CAMBIOS EN TIEMPO REAL ==========
-    function suscribirACambios() {
-      try {
-        const subscription = supabase
-          .channel('productos_changes')
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'productos'
-            },
-            (payload) => {
-              console.log('🔔 Cambio detectado en productos:', payload);
-              
-              if (payload.eventType === 'INSERT') {
-                showNotification("➕ Nuevo producto agregado", "success");
-                cargarProductos();
-              } else if (payload.eventType === 'DELETE') {
-                showNotification("🗑️ Producto eliminado", "success");
-                cargarProductos();
-              } else if (payload.eventType === 'UPDATE') {
-                showNotification("✏️ Producto actualizado", "success");
-                cargarProductos();
-              }
-            }
-          )
-          .subscribe();
-
-        console.log('👂 Escuchando cambios en tiempo real...');
-        return subscription;
-      } catch (error) {
-        console.warn('⚠️ No se pudo activar tiempo real:', error);
-        return null;
-      }
-    }
-
     // ========== INICIALIZACIÓN ==========
     async function inicializar() {
       console.log('🚀 Inicializando panel de administración...');
@@ -1092,11 +1163,11 @@
       const conexionOk = await verificarConexion();
       
       if (conexionOk) {
+        // Cargar categorías primero
+        await cargarCategorias();
+        
         // Cargar productos
         await cargarProductos();
-        
-        // Suscribirse a cambios en tiempo real
-        suscribirACambios();
         
         console.log('✅ Panel de administración listo');
         showNotification("✅ Bienvenido al panel de administración", "success");
@@ -1114,77 +1185,9 @@
       }
     }
 
-    // ========== AUTO-GUARDADO DE BORRADOR ==========
-    function guardarBorradorLocal() {
-      const borrador = {
-        nombre: nombre.value,
-        precio: precio.value,
-        descripcion: descripcion.value,
-        imagen: imagen.value,
-        timestamp: Date.now()
-      };
-      sessionStorage.setItem('producto_borrador', JSON.stringify(borrador));
-    }
-
-    function cargarBorradorLocal() {
-      const borradorGuardado = sessionStorage.getItem('producto_borrador');
-      if (borradorGuardado) {
-        try {
-          const borrador = JSON.parse(borradorGuardado);
-          
-          const unaHora = 60 * 60 * 1000;
-          if (Date.now() - borrador.timestamp < unaHora) {
-            if (confirm('Se encontró un borrador guardado. ¿Deseas recuperarlo?')) {
-              nombre.value = borrador.nombre || '';
-              precio.value = borrador.precio || '';
-              descripcion.value = borrador.descripcion || '';
-              imagen.value = borrador.imagen || '';
-              
-              if (imagen.value) {
-                imagen.dispatchEvent(new Event('input'));
-              }
-              
-              showNotification("📝 Borrador recuperado", "success");
-            } else {
-              sessionStorage.removeItem('producto_borrador');
-            }
-          } else {
-            sessionStorage.removeItem('producto_borrador');
-          }
-        } catch (error) {
-          console.error('Error al cargar borrador:', error);
-          sessionStorage.removeItem('producto_borrador');
-        }
-      }
-    }
-
-    // Guardar borrador automáticamente
-    [nombre, precio, descripcion, imagen].forEach(input => {
-      input.addEventListener('input', guardarBorradorLocal);
-    });
-
     // ========== EJECUTAR AL CARGAR LA PÁGINA ==========
     window.addEventListener('DOMContentLoaded', async () => {
-      cargarBorradorLocal();
       await inicializar();
-    });
-
-    // ========== ADVERTENCIA ANTES DE SALIR ==========
-    window.addEventListener('beforeunload', (e) => {
-      if (nombre.value || precio.value || descripcion.value || imagen.value) {
-        e.preventDefault();
-        e.returnValue = '¿Seguro que quieres salir? Los cambios no guardados se perderán.';
-        return e.returnValue;
-      }
-    });
-
-    // ========== MANEJO DE ERRORES GLOBALES ==========
-    window.addEventListener('error', (e) => {
-      console.error('❌ Error global:', e.error);
-    });
-
-    window.addEventListener('unhandledrejection', (e) => {
-      console.error('❌ Promise rechazada:', e.reason);
     });
 
     // Exponer para debugging

@@ -18,7 +18,6 @@
       line-height: 1.6;
     }
 
-    /* Menú Lateral */
     .side-menu {
       position: fixed;
       left: -300px;
@@ -172,16 +171,6 @@
       visibility: visible;
     }
 
-    .menu-badge {
-      background: #ff4444;
-      color: white;
-      font-size: 0.7em;
-      padding: 2px 6px;
-      border-radius: 10px;
-      margin-left: auto;
-    }
-
-    /* Header */
     header {
       text-align: center;
       padding: 20px 10px 20px 70px;
@@ -204,7 +193,6 @@
       font-size: 1.1em;
     }
 
-    /* Contenedor Principal */
     .profile-container {
       max-width: 1400px;
       margin: 40px auto;
@@ -214,7 +202,6 @@
       gap: 30px;
     }
 
-    /* Sidebar de Perfil */
     .profile-sidebar {
       background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
       border-radius: 20px;
@@ -300,6 +287,7 @@
       text-align: center;
       text-decoration: none;
       display: block;
+      font-size: 0.95em;
     }
 
     .btn-primary {
@@ -324,7 +312,20 @@
       border-color: #25D366;
     }
 
-    /* Contenido Principal */
+    .btn-danger {
+      background: #ff4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #ff6666;
+    }
+
+    .btn-small {
+      padding: 8px 15px;
+      font-size: 0.85em;
+    }
+
     .profile-content {
       display: flex;
       flex-direction: column;
@@ -398,7 +399,6 @@
       cursor: not-allowed;
     }
 
-    /* Pedidos Recientes */
     .order-list {
       display: flex;
       flex-direction: column;
@@ -410,10 +410,6 @@
       border: 1px solid #333;
       border-radius: 15px;
       padding: 20px;
-      display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 20px;
-      align-items: center;
       transition: all 0.3s ease;
     }
 
@@ -422,32 +418,16 @@
       transform: translateX(5px);
     }
 
-    .order-image {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      background: #2a2a2a;
+    .order-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      font-size: 2em;
+      margin-bottom: 15px;
     }
 
-    .order-details {
-      flex: 1;
-    }
-
-    .order-title {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 5px;
-    }
-
-    .order-date {
-      color: #888;
+    .order-id {
       font-size: 0.9em;
-      margin-bottom: 8px;
+      color: #888;
     }
 
     .order-status {
@@ -458,22 +438,52 @@
       font-weight: bold;
     }
 
-    .status-delivered {
+    .status-entregado {
       background: rgba(37, 211, 102, 0.2);
       color: #25D366;
       border: 1px solid #25D366;
     }
 
-    .status-pending {
+    .status-pendiente {
       background: rgba(255, 193, 7, 0.2);
       color: #ffc107;
       border: 1px solid #ffc107;
     }
 
-    .status-processing {
+    .status-en-proceso {
       background: rgba(33, 150, 243, 0.2);
       color: #2196f3;
       border: 1px solid #2196f3;
+    }
+
+    .status-cancelado {
+      background: rgba(255, 68, 68, 0.2);
+      color: #ff4444;
+      border: 1px solid #ff4444;
+    }
+
+    .order-details {
+      margin-bottom: 10px;
+    }
+
+    .order-date {
+      color: #888;
+      font-size: 0.9em;
+      margin-bottom: 8px;
+    }
+
+    .order-products {
+      color: #ccc;
+      font-size: 0.95em;
+      margin-bottom: 10px;
+    }
+
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #333;
     }
 
     .order-price {
@@ -482,170 +492,59 @@
       color: #25D366;
     }
 
-    /* Direcciones */
-    .address-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .address-card {
-      background: #1a1a1a;
-      border: 2px solid #333;
-      border-radius: 15px;
-      padding: 20px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .address-card.primary {
-      border-color: #25D366;
-    }
-
-    .address-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-
-    .address-label {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #25D366;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 10px;
-      font-size: 0.75em;
-      font-weight: bold;
-    }
-
-    .address-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .address-text {
-      color: #ccc;
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-
-    .address-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-small {
-      padding: 8px 15px;
-      font-size: 0.85em;
-    }
-
-    /* Preferencias */
-    .preferences-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .preference-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 15px;
-    }
-
-    .preference-info {
-      flex: 1;
-    }
-
-    .preference-title {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 5px;
-    }
-
-    .preference-description {
-      color: #888;
-      font-size: 0.9em;
-    }
-
-    /* Toggle Switch */
-    .toggle-switch {
-      position: relative;
-      width: 60px;
-      height: 30px;
-      background: #333;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .toggle-switch.active {
-      background: #25D366;
-    }
-
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 24px;
-      height: 24px;
-      background: white;
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(37, 211, 102, 0.3);
+      border-top: 3px solid #25D366;
       border-radius: 50%;
-      transition: all 0.3s ease;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
     }
 
-    .toggle-switch.active::after {
-      left: 33px;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    /* Footer */
-    footer {
-      background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
-      padding: 60px 20px 30px;
-      border-top: 2px solid #333;
-      margin-top: 60px;
+    .notification {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      padding: 15px 25px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      z-index: 3000;
+      transform: translateX(400px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
-      margin-bottom: 30px;
+    .notification.show {
+      transform: translateX(0);
     }
 
-    .footer-section h3 {
-      color: #25D366;
-      margin-bottom: 20px;
-      font-size: 1.3em;
+    .notification.success {
+      background: rgba(37, 211, 102, 0.9);
+      border: 1px solid rgba(37, 211, 102, 0.3);
     }
 
-    .footer-section p,
-    .footer-section a {
-      color: #ccc;
-      text-decoration: none;
-      line-height: 1.8;
-      transition: color 0.3s ease;
+    .notification.error {
+      background: rgba(255, 107, 107, 0.9);
+      border: 1px solid rgba(255, 107, 107, 0.3);
     }
 
-    .footer-section a:hover {
-      color: #25D366;
-    }
-
-    .footer-bottom {
+    .empty-state {
       text-align: center;
-      padding-top: 30px;
-      border-top: 1px solid #333;
-      color: #666;
+      padding: 40px 20px;
+      color: #888;
+    }
+
+    .empty-state-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
     }
 
     a.whatsapp {
@@ -668,7 +567,6 @@
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
       .profile-container {
         grid-template-columns: 1fr;
@@ -693,58 +591,6 @@
         grid-template-columns: 1fr;
       }
 
-      .order-item {
-        grid-template-columns: 60px 1fr;
-        gap: 15px;
-      }
-
-      .order-image {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5em;
-      }
-
-      .order-price {
-        grid-column: 2;
-        text-align: right;
-        margin-top: 10px;
-      }
-
-      .address-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .side-menu {
-        width: 280px;
-        left: -280px;
-      }
-
-      .menu-toggle {
-        width: 45px;
-        height: 45px;
-        left: 15px;
-        top: 15px;
-      }
-
-      a.whatsapp {
-        bottom: 15px;
-        right: 15px;
-        padding: 12px 16px;
-        font-size: 0.9em;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .profile-container {
-        padding: 15px;
-        margin: 20px auto;
-      }
-
-      .side-menu {
-        width: 100%;
-        left: -100%;
-      }
-
       .profile-stats {
         grid-template-columns: 1fr;
       }
@@ -752,7 +598,6 @@
   </style>
 </head>
 <body>
-  <!-- Botón para abrir/cerrar menú -->
   <div class="menu-toggle" id="menuToggle">
     <div class="menu-toggle-icon">
       <span></span>
@@ -761,10 +606,8 @@
     </div>
   </div>
 
-  <!-- Overlay oscuro -->
   <div class="menu-overlay" id="menuOverlay"></div>
 
-  <!-- Menú Lateral -->
   <nav class="side-menu" id="sideMenu">
     <div class="menu-header">
       <div class="menu-logo">VapeDealer MX</div>
@@ -781,63 +624,14 @@
         <span class="menu-item-icon">🛍️</span>
         <span class="menu-item-text">Catálogo</span>
       </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">⭐</span>
-        <span class="menu-item-text">Ofertas Especiales</span>
-        <span class="menu-badge">NEW</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">📦</span>
-        <span class="menu-item-text">Mis Pedidos</span>
-      </a>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Categorías</div>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">🍯</span>
-        <span class="menu-item-text">Premium</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">⚡</span>
-        <span class="menu-item-text">Nuevos</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">💰</span>
-        <span class="menu-item-text">Ofertas</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">🌟</span>
-        <span class="menu-item-text">Populares</span>
-      </a>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title">Cuenta</div>
-      <a href="MiPerfil.html" class="menu-item">
+      <a href="perfil.html" class="menu-item">
         <span class="menu-item-icon">👤</span>
         <span class="menu-item-text">Mi Perfil</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">❤️</span>
-        <span class="menu-item-text">Favoritos</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">⚙️</span>
-        <span class="menu-item-text">Configuración</span>
       </a>
     </div>
 
     <div class="menu-section">
       <div class="menu-section-title">Ayuda</div>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">💬</span>
-        <span class="menu-item-text">Contacto</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">❓</span>
-        <span class="menu-item-text">FAQ</span>
-      </a>
       <a href="https://wa.me/523346799345" target="_blank" class="menu-item">
         <span class="menu-item-icon">📱</span>
         <span class="menu-item-text">WhatsApp</span>
@@ -845,311 +639,100 @@
     </div>
   </nav>
 
-  <!-- Header -->
   <header>
     <h1>VapeDealer MX</h1>
     <p>Mi Perfil</p>
   </header>
 
-  <!-- Contenedor Principal -->
   <div class="profile-container">
-    <!-- Sidebar -->
     <aside class="profile-sidebar">
-      <div class="profile-avatar">👤</div>
-      <h2 class="profile-name">Juan Pérez</h2>
-      <p class="profile-email">juan.perez@email.com</p>
+      <div class="profile-avatar" id="profileAvatar">👤</div>
+      <h2 class="profile-name" id="profileName">Cargando...</h2>
+      <p class="profile-email" id="profileEmail">Cargando...</p>
 
       <div class="profile-stats">
         <div class="stat-box">
-          <div class="stat-number">12</div>
+          <div class="stat-number" id="totalPedidos">0</div>
           <div class="stat-label">Pedidos</div>
         </div>
         <div class="stat-box">
-          <div class="stat-number">8</div>
-          <div class="stat-label">Favoritos</div>
+          <div class="stat-number" id="totalGastado">$0</div>
+          <div class="stat-label">Total Gastado</div>
         </div>
       </div>
 
       <div class="profile-actions">
-        <button class="btn btn-primary">Editar Perfil</button>
-        <button class="btn btn-secondary">Cambiar Contraseña</button>
-        <button class="btn btn-secondary">Cerrar Sesión</button>
+        <button class="btn btn-secondary" onclick="cerrarSesion()">Cerrar Sesión</button>
       </div>
     </aside>
 
-    <!-- Contenido -->
     <main class="profile-content">
-      <!-- Información Personal -->
       <section class="section-card">
         <div class="section-header">
           <h2 class="section-title">
             <span class="section-icon">📝</span>
             Información Personal
           </h2>
-          <button class="btn btn-primary btn-small">Guardar Cambios</button>
+          <button class="btn btn-primary btn-small" onclick="guardarCambios()">Guardar Cambios</button>
         </div>
         
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Nombre Completo</label>
-            <input type="text" class="form-input" value="Juan Pérez García" />
+            <input type="text" class="form-input" id="inputNombre" />
           </div>
           <div class="form-group">
             <label class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-input" value="juan.perez@email.com" />
+            <input type="email" class="form-input" id="inputCorreo" disabled />
           </div>
           <div class="form-group">
             <label class="form-label">Teléfono</label>
-            <input type="tel" class="form-input" value="+52 33 1234 5678" />
+            <input type="tel" class="form-input" id="inputTelefono" placeholder="+52 33 1234 5678" />
           </div>
           <div class="form-group">
-            <label class="form-label">Fecha de Nacimiento</label>
-            <input type="date" class="form-input" value="1990-05-15" />
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-input" id="inputDireccion" placeholder="Calle, colonia, ciudad" />
           </div>
         </div>
       </section>
 
-      <!-- Pedidos Recientes -->
       <section class="section-card">
         <div class="section-header">
           <h2 class="section-title">
             <span class="section-icon">📦</span>
-            Pedidos Recientes
-          </h2>
-          <a href="#" class="btn btn-secondary btn-small">Ver Todos</a>
-        </div>
-
-        <div class="order-list">
-          <div class="order-item">
-            <div class="order-image">🍯</div>
-            <div class="order-details">
-              <div class="order-title">Vape Premium Gold Edition</div>
-              <div class="order-date">Pedido el 10 Oct 2025</div>
-              <span class="order-status status-delivered">✓ Entregado</span>
-            </div>
-            <div class="order-price">$450</div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-image">⚡</div>
-            <div class="order-details">
-              <div class="order-title">Vape Storm Series X</div>
-              <div class="order-date">Pedido el 8 Oct 2025</div>
-              <span class="order-status status-processing">⏱ En camino</span>
-            </div>
-            <div class="order-price">$380</div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-image">🌟</div>
-            <div class="order-details">
-              <div class="order-title">Kit Completo Starter</div>
-              <div class="order-date">Pedido el 5 Oct 2025</div>
-              <span class="order-status status-pending">📋 Preparando</span>
-            </div>
-            <div class="order-price">$650</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Direcciones -->
-      <section class="section-card">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="section-icon">📍</span>
-            Mis Direcciones
-          </h2>
-          <button class="btn btn-primary btn-small">+ Nueva Dirección</button>
-        </div>
-
-        <div class="address-grid">
-          <div class="address-card primary">
-            <span class="address-label">Principal</span>
-            <h3 class="address-title">🏠 Casa</h3>
-            <p class="address-text">
-              Calle Revolución #123<br>
-              Col. Centro<br>
-              Cihuatlán, Jalisco<br>
-              CP: 48970
-            </p>
-            <div class="address-actions">
-              <button class="btn btn-secondary btn-small">Editar</button>
-              <button class="btn btn-secondary btn-small">Eliminar</button>
-            </div>
-          </div>
-
-          <div class="address-card">
-            <h3 class="address-title">💼 Trabajo</h3>
-            <p class="address-text">
-              Av. Miguel Hidalgo #456<br>
-              Col. Progreso<br>
-              Melaque, Jalisco<br>
-              CP: 48980
-            </p>
-            <div class="address-actions">
-              <button class="btn btn-secondary btn-small">Editar</button>
-              <button class="btn btn-secondary btn-small">Eliminar</button>
-            </div>
-          </div>
-
-          <div class="address-card">
-            <h3 class="address-title">👨‍👩‍👧 Familiar</h3>
-            <p class="address-text">
-              Calle Morelos #789<br>
-              Col. Jardines<br>
-              Barra de Navidad, Jalisco<br>
-              CP: 48987
-            </p>
-            <div class="address-actions">
-              <button class="btn btn-secondary btn-small">Editar</button>
-              <button class="btn btn-secondary btn-small">Eliminar</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Preferencias -->
-      <section class="section-card">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="section-icon">⚙️</span>
-            Preferencias
+            Mis Pedidos Recientes
           </h2>
         </div>
 
-        <div class="preferences-list">
-          <div class="preference-item">
-            <div class="preference-info">
-              <div class="preference-title">Notificaciones por Email</div>
-              <div class="preference-description">Recibe actualizaciones de pedidos y ofertas</div>
-            </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-          </div>
-
-          <div class="preference-item">
-            <div class="preference-info">
-              <div class="preference-title">Notificaciones WhatsApp</div>
-              <div class="preference-description">Alertas de envío y promociones exclusivas</div>
-            </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-          </div>
-
-          <div class="preference-item">
-            <div class="preference-info">
-              <div class="preference-title">Newsletter</div>
-              <div class="preference-description">Recibe nuestro boletín semanal con novedades</div>
-            </div>
-            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-          </div>
-
-          <div class="preference-item">
-            <div class="preference-info">
-              <div class="preference-title">Modo Oscuro</div>
-              <div class="preference-description">Interfaz con tema oscuro (activo por defecto)</div>
-            </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-          </div>
-
-          <div class="preference-item">
-            <div class="preference-info">
-              <div class="preference-title">Guardar Historial de Compras</div>
-              <div class="preference-description">Permite recomendaciones personalizadas</div>
-            </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-          </div>
+        <div id="pedidosContainer">
+          <div class="loading-spinner"></div>
         </div>
       </section>
 
-      <!-- Métodos de Pago -->
-      <section class="section-card">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="section-icon">💳</span>
-            Métodos de Pago
-          </h2>
-          <button class="btn btn-primary btn-small">+ Agregar Método</button>
-        </div>
-
-        <div class="order-list">
-          <div class="order-item">
-            <div class="order-image">💵</div>
-            <div class="order-details">
-              <div class="order-title">Efectivo al Recibir</div>
-              <div class="order-date">Método preferido</div>
-              <span class="order-status status-delivered">✓ Activo</span>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-image">🏦</div>
-            <div class="order-details">
-              <div class="order-title">Transferencia Bancaria</div>
-              <div class="order-date">BBVA •••• 1234</div>
-              <span class="order-status status-delivered">✓ Verificado</span>
-            </div>
-          </div>
-
-          <div class="order-item">
-            <div class="order-image">💳</div>
-            <div class="order-details">
-              <div class="order-title">Tarjeta de Débito</div>
-              <div class="order-date">Visa •••• 5678</div>
-              <span class="order-status status-delivered">✓ Verificado</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Seguridad -->
       <section class="section-card">
         <div class="section-header">
           <h2 class="section-title">
             <span class="section-icon">🔒</span>
-            Seguridad
+            Cambiar Contraseña
           </h2>
         </div>
 
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Contraseña Actual</label>
-            <input type="password" class="form-input" placeholder="••••••••" />
-          </div>
-          <div class="form-group">
             <label class="form-label">Nueva Contraseña</label>
-            <input type="password" class="form-input" placeholder="••••••••" />
+            <input type="password" class="form-input" id="newPassword" placeholder="Mínimo 6 caracteres" />
           </div>
           <div class="form-group">
             <label class="form-label">Confirmar Nueva Contraseña</label>
-            <input type="password" class="form-input" placeholder="••••••••" />
+            <input type="password" class="form-input" id="confirmPassword" placeholder="Repite la contraseña" />
           </div>
         </div>
 
         <div style="margin-top: 20px;">
-          <button class="btn btn-primary">Actualizar Contraseña</button>
-        </div>
-
-        <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #333;">
-          <h3 style="color: #ccc; margin-bottom: 15px;">Sesiones Activas</h3>
-          <div class="preferences-list">
-            <div class="preference-item">
-              <div class="preference-info">
-                <div class="preference-title">🖥️ Windows - Chrome</div>
-                <div class="preference-description">Última actividad: Hace 5 minutos (Esta sesión)</div>
-              </div>
-              <span class="order-status status-delivered">Activa</span>
-            </div>
-            <div class="preference-item">
-              <div class="preference-info">
-                <div class="preference-title">📱 iPhone - Safari</div>
-                <div class="preference-description">Última actividad: Hace 2 horas</div>
-              </div>
-              <button class="btn btn-secondary btn-small">Cerrar</button>
-            </div>
-          </div>
+          <button class="btn btn-primary" onclick="cambiarContrasena()">Actualizar Contraseña</button>
         </div>
       </section>
 
-      <!-- Eliminar Cuenta -->
       <section class="section-card" style="border: 2px solid #ff4444;">
         <div class="section-header">
           <h2 class="section-title">
@@ -1159,61 +742,459 @@
         </div>
 
         <p style="color: #ccc; margin-bottom: 20px;">
-          Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, está seguro.
+          Una vez que elimines tu cuenta, no hay vuelta atrás. Se eliminarán todos tus datos, pedidos e historial de compras permanentemente.
         </p>
 
-        <button class="btn" style="background: #ff4444; color: white;">
+        <button class="btn btn-danger" onclick="eliminarCuenta()">
           Eliminar mi Cuenta
         </button>
       </section>
     </main>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>VapeDealer MX</h3>
-        <p>Tu lugar con los mejores Vapos y mieles 🤫 el mejor servicio al cliente.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Contacto</h3>
-        <p>📞 WhatsApp: +52 33 467 993 45</p>
-        <p>⏰ Horario: 24/7</p>
-        <p>🚚 Envíos a todo cihuatlan, melaque y alrededores</p>
-      </div>
-      <div class="footer-section">
-        <h3>Información</h3>
-        <a href="#">Términos y Condiciones</a><br>
-        <a href="#">Política de Privacidad</a><br>
-        <a href="#">Preguntas Frecuentes</a><br>
-        <a href="#">Garantías</a>
-      </div>
-      <div class="footer-section">
-        <h3>Síguenos</h3>
-        <a href="#">Facebook</a><br>
-        <a href="#">Instagram</a><br>
-        <a href="#">TikTok</a><br>
-        <a href="#">WhatsApp</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 VapeDealer MX. Todos los derechos reservados.</p>
-    </div>
-  </footer>
-
-  <!-- Botón WhatsApp -->
   <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
 
-  <script>
-    // Funcionalidad del menú lateral
+  <div id="notification" class="notification"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    let currentUser = null;
+    let userData = null;
+
+    // ========== NOTIFICACIONES ==========
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 4000);
+    }
+    window.showNotification = showNotification;
+
+    // ========== VERIFICAR AUTENTICACIÓN ==========
+    async function verificarAutenticacion() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+        
+        if (!session) {
+          showNotification("⚠️ Debes iniciar sesión", "error");
+          setTimeout(() => {
+            window.location.href = 'login_user.html';
+          }, 2000);
+          return false;
+        }
+
+        currentUser = session.user;
+        console.log('✅ Usuario autenticado:', currentUser.email);
+        
+        await cargarDatosUsuario();
+        return true;
+      } catch (error) {
+        console.error('❌ Error verificando autenticación:', error);
+        showNotification("Error de autenticación", "error");
+        return false;
+      }
+    }
+
+    // ========== CARGAR DATOS DEL USUARIO ==========
+    async function cargarDatosUsuario() {
+      try {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('id_usuario', currentUser.id)
+          .single();
+
+        if (error) {
+          if (error.code === 'PGRST116') {
+            await crearUsuario();
+            return;
+          }
+          throw error;
+        }
+
+        userData = data;
+        mostrarDatosEnPantalla();
+        await cargarPedidos();
+        await cargarEstadisticas();
+      } catch (error) {
+        console.error('❌ Error cargando datos:', error);
+        showNotification("Error al cargar datos", "error");
+      }
+    }
+
+    // ========== CREAR USUARIO NUEVO ==========
+    async function crearUsuario() {
+      try {
+        const nuevoUsuario = {
+          id_usuario: currentUser.id,
+          correo: currentUser.email,
+          nombre: currentUser.user_metadata?.full_name || 'Usuario',
+          telefono: '',
+          direccion: '',
+          rol: 'cliente'
+        };
+
+        const { data, error } = await supabase
+          .from('usuarios')
+          .insert([nuevoUsuario])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        userData = data;
+        mostrarDatosEnPantalla();
+        showNotification("✅ Perfil creado exitosamente", "success");
+      } catch (error) {
+        console.error('❌ Error creando usuario:', error);
+        showNotification("Error al crear perfil", "error");
+      }
+    }
+
+    // ========== MOSTRAR DATOS EN PANTALLA ==========
+    function mostrarDatosEnPantalla() {
+      document.getElementById('profileName').textContent = userData.nombre || 'Usuario';
+      document.getElementById('profileEmail').textContent = userData.correo;
+      document.getElementById('inputNombre').value = userData.nombre || '';
+      document.getElementById('inputCorreo').value = userData.correo;
+      document.getElementById('inputTelefono').value = userData.telefono || '';
+      document.getElementById('inputDireccion').value = userData.direccion || '';
+      
+      const inicial = userData.nombre ? userData.nombre.charAt(0).toUpperCase() : '👤';
+      document.getElementById('profileAvatar').textContent = inicial;
+    }
+
+    // ========== CARGAR PEDIDOS ==========
+    async function cargarPedidos() {
+      try {
+        const { data: pedidos, error } = await supabase
+          .from('pedidos')
+          .select(`
+            *,
+            detalle_pedidos (
+              cantidad,
+              precio_unitario,
+              productos (
+                nombre
+              )
+            )
+          `)
+          .eq('id_usuario', userData.id_usuario)
+          .order('fecha', { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+
+        mostrarPedidos(pedidos || []);
+      } catch (error) {
+        console.error('Error cargando pedidos:', error);
+        document.getElementById('pedidosContainer').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>No se pudieron cargar los pedidos</p>
+          </div>
+        `;
+      }
+    }
+
+    // ========== MOSTRAR PEDIDOS EN HTML ==========
+    function mostrarPedidos(pedidos) {
+      const container = document.getElementById('pedidosContainer');
+      
+      if (!pedidos || pedidos.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>Aún no tienes pedidos</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">¡Visita nuestro catálogo y haz tu primera compra!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const pedidosHTML = pedidos.map(pedido => {
+        const total = calcularTotalPedido(pedido.detalle_pedidos);
+        const productos = pedido.detalle_pedidos.map(d => d.productos.nombre).join(', ');
+        const fecha = new Date(pedido.fecha).toLocaleDateString('es-MX', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        let statusClass = 'status-pendiente';
+        let statusText = '📋 Pendiente';
+        
+        if (pedido.estado === 'entregado') {
+          statusClass = 'status-entregado';
+          statusText = '✓ Entregado';
+        } else if (pedido.estado === 'en-proceso' || pedido.estado === 'en proceso') {
+          statusClass = 'status-en-proceso';
+          statusText = '⏱ En proceso';
+        } else if (pedido.estado === 'cancelado') {
+          statusClass = 'status-cancelado';
+          statusText = '✗ Cancelado';
+        }
+
+        return `
+          <div class="order-item">
+            <div class="order-header">
+              <div class="order-id">Pedido #${pedido.id_pedido.substring(0, 8)}</div>
+              <span class="order-status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="order-details">
+              <div class="order-date">📅 ${fecha}</div>
+              <div class="order-products">🛍️ ${productos}</div>
+            </div>
+            <div class="order-footer">
+              <div class="order-price">${total.toFixed(2)}</div>
+              <button class="btn btn-secondary btn-small" onclick="verDetallePedido('${pedido.id_pedido}')">Ver Detalles</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = `<div class="order-list">${pedidosHTML}</div>`;
+    }
+
+    // ========== CALCULAR TOTAL DEL PEDIDO ==========
+    function calcularTotalPedido(detalles) {
+      if (!detalles || detalles.length === 0) return 0;
+      return detalles.reduce((sum, detalle) => {
+        return sum + (detalle.cantidad * detalle.precio_unitario);
+      }, 0);
+    }
+
+    // ========== VER DETALLE DEL PEDIDO ==========
+    window.verDetallePedido = async function(idPedido) {
+      try {
+        const { data, error } = await supabase
+          .from('pedidos')
+          .select(`
+            *,
+            detalle_pedidos (
+              cantidad,
+              precio_unitario,
+              productos (
+                nombre,
+                descripcion
+              )
+            )
+          `)
+          .eq('id_pedido', idPedido)
+          .single();
+
+        if (error) throw error;
+
+        const detalles = data.detalle_pedidos.map(d => 
+          `${d.cantidad}x ${d.productos.nombre} - ${d.precio_unitario}`
+        ).join('\n');
+
+        alert(`Detalles del Pedido\n\nFecha: ${new Date(data.fecha).toLocaleDateString('es-MX')}\nEstado: ${data.estado}\n\nProductos:\n${detalles}\n\nTotal: ${calcularTotalPedido(data.detalle_pedidos).toFixed(2)}`);
+      } catch (error) {
+        console.error('Error:', error);
+        showNotification("Error al cargar detalles", "error");
+      }
+    };
+
+    // ========== CARGAR ESTADÍSTICAS ==========
+    async function cargarEstadisticas() {
+      try {
+        const { data: pedidos, error } = await supabase
+          .from('pedidos')
+          .select(`
+            id_pedido,
+            detalle_pedidos (
+              cantidad,
+              precio_unitario
+            )
+          `)
+          .eq('id_usuario', userData.id_usuario);
+
+        if (error) throw error;
+
+        const totalPedidos = pedidos ? pedidos.length : 0;
+        const totalGastado = pedidos ? pedidos.reduce((sum, pedido) => {
+          return sum + calcularTotalPedido(pedido.detalle_pedidos);
+        }, 0) : 0;
+
+        document.getElementById('totalPedidos').textContent = totalPedidos;
+        document.getElementById('totalGastado').textContent = `${totalGastado.toFixed(2)}`;
+      } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+        document.getElementById('totalPedidos').textContent = '0';
+        document.getElementById('totalGastado').textContent = '$0';
+      }
+    }
+
+    // ========== GUARDAR CAMBIOS ==========
+    window.guardarCambios = async function() {
+      try {
+        const nombre = document.getElementById('inputNombre').value.trim();
+        const telefono = document.getElementById('inputTelefono').value.trim();
+        const direccion = document.getElementById('inputDireccion').value.trim();
+
+        if (!nombre) {
+          showNotification("El nombre es requerido", "error");
+          return;
+        }
+
+        const { error } = await supabase
+          .from('usuarios')
+          .update({
+            nombre,
+            telefono,
+            direccion
+          })
+          .eq('id_usuario', userData.id_usuario);
+
+        if (error) throw error;
+
+        userData.nombre = nombre;
+        userData.telefono = telefono;
+        userData.direccion = direccion;
+        
+        mostrarDatosEnPantalla();
+        showNotification("✅ Cambios guardados exitosamente", "success");
+      } catch (error) {
+        console.error('❌ Error guardando cambios:', error);
+        showNotification("Error al guardar cambios", "error");
+      }
+    };
+
+    // ========== CAMBIAR CONTRASEÑA ==========
+    window.cambiarContrasena = async function() {
+      try {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!newPassword || !confirmPassword) {
+          showNotification("Completa ambos campos de contraseña", "error");
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          showNotification("Las contraseñas no coinciden", "error");
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          showNotification("La contraseña debe tener al menos 6 caracteres", "error");
+          return;
+        }
+
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword
+        });
+
+        if (error) throw error;
+
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        
+        showNotification("✅ Contraseña actualizada exitosamente", "success");
+      } catch (error) {
+        console.error('❌ Error cambiando contraseña:', error);
+        showNotification("Error al cambiar contraseña: " + error.message, "error");
+      }
+    };
+
+    // ========== CERRAR SESIÓN ==========
+    window.cerrarSesion = async function() {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+
+        showNotification("✅ Sesión cerrada", "success");
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      } catch (error) {
+        console.error('❌ Error cerrando sesión:', error);
+        showNotification("Error al cerrar sesión", "error");
+      }
+    };
+
+    window.eliminarCuenta = async function() {
+  if (!confirm('¿Estás seguro de que deseas eliminar tu cuenta?\n\nEsta acción eliminará:\n- Tu perfil\n- Todos tus pedidos\n- Todo tu historial\n\nEsta acción NO se puede deshacer.')) return;
+  if (!confirm('¿REALMENTE SEGURO? Esta es tu última oportunidad.')) return;
+
+  try {
+    if (!userData || !userData.id_usuario) throw new Error("No se encontró el ID del usuario.");
+
+    const idUsuario = userData.id_usuario;
+
+    // === 1. Obtener pedidos del usuario ===
+    const { data: pedidos, error: errorPedidos } = await supabase
+      .from('pedidos')
+      .select('id_pedido')
+      .eq('id_usuario', idUsuario);
+
+    if (errorPedidos) throw errorPedidos;
+
+    if (pedidos && pedidos.length > 0) {
+      const idsPedidos = pedidos.map(p => p.id_pedido);
+
+      // === 2. Eliminar detalle de pedidos ===
+      const { error: errorDetalles } = await supabase
+        .from('detalle_pedidos')
+        .delete()
+        .in('id_pedido', idsPedidos);
+      if (errorDetalles) throw errorDetalles;
+
+      // === 3. Eliminar pagos relacionados ===
+      const { error: errorPagos } = await supabase
+        .from('pagos')
+        .delete()
+        .in('id_pedido', idsPedidos);
+      if (errorPagos) throw errorPagos;
+    }
+
+    // === 4. Eliminar pedidos ===
+    const { error: errorBorrarPedidos } = await supabase
+      .from('pedidos')
+      .delete()
+      .eq('id_usuario', idUsuario);
+    if (errorBorrarPedidos) throw errorBorrarPedidos;
+
+    // === 5. Eliminar usuario ===
+    const { error: errorBorrarUsuario } = await supabase
+      .from('usuarios')
+      .delete()
+      .eq('id_usuario', idUsuario);
+    if (errorBorrarUsuario) throw errorBorrarUsuario;
+
+    showNotification('✅ Tu cuenta y todos tus datos han sido eliminados.', 'success');
+
+    // === 6. Cerrar sesión y redirigir ===
+    await supabase.auth.signOut();
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 2000);
+
+  } catch (err) {
+    console.error('❌ Error al eliminar cuenta:', err);
+    showNotification('❌ No se pudo eliminar tu cuenta. Verifica consola.', 'error');
+  }
+}
+
+
+    // ========== MENÚ LATERAL ==========
     const menuToggle = document.getElementById('menuToggle');
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
 
-    let menuState = {
-      isOpen: false
-    };
+    let menuState = { isOpen: false };
 
     function openMenu() {
       menuState.isOpen = true;
@@ -1232,20 +1213,13 @@
     }
 
     menuToggle.addEventListener('click', () => {
-      if (menuState.isOpen) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
+      menuState.isOpen ? closeMenu() : openMenu();
     });
 
     menuOverlay.addEventListener('click', closeMenu);
 
-    const menuItems = document.querySelectorAll('.menu-item');
-    menuItems.forEach(item => {
-      item.addEventListener('click', () => {
-        closeMenu();
-      });
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', closeMenu);
     });
 
     document.addEventListener('keydown', (e) => {
@@ -1254,56 +1228,8 @@
       }
     });
 
-    sideMenu.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    // Toggle switches
-    function toggleSwitch(element) {
-      element.classList.toggle('active');
-    }
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-
-    // Simulación de guardado de cambios
-    document.querySelectorAll('.btn-primary').forEach(btn => {
-      if (btn.textContent.includes('Guardar') || btn.textContent.includes('Actualizar')) {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          btn.textContent = '✓ Guardado';
-          btn.style.background = 'linear-gradient(45deg, #20b358, #25D366)';
-          
-          setTimeout(() => {
-            if (btn.textContent.includes('Guardar Cambios')) {
-              btn.textContent = 'Guardar Cambios';
-            } else if (btn.textContent.includes('Actualizar')) {
-              btn.textContent = 'Actualizar Contraseña';
-            }
-            btn.style.background = 'linear-gradient(45deg, #25D366, #20b358)';
-          }, 2000);
-        });
-      }
-    });
-
-    // Confirmación para eliminar cuenta
-    document.querySelector('.btn[style*="ff4444"]').addEventListener('click', (e) => {
-      e.preventDefault();
-      if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
-        alert('Por favor, contacta al soporte para proceder con la eliminación de tu cuenta.');
-      }
-    });
+    // ========== INICIALIZAR ==========
+    verificarAutenticacion();
   </script>
 </body>
 </html>
