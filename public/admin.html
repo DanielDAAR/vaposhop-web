@@ -805,20 +805,28 @@
       }
     }
 
-    // ========== FUNCIÓN PARA CARGAR PRODUCTOS ==========
+   // ========== FUNCIÓN PARA CARGAR PRODUCTOS ==========
     async function cargarProductos() {
       lista.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><p>Cargando productos...</p></div>';
 
       try {
-        const { data: productos, error } = await supabase
+        // Primero intentar cargar productos con join
+        let { data: productos, error } = await supabase
           .from('productos')
-          .select(`
-            *,
-            categorias: id_categoria (
-              nombre
-            )
-          `)
+          .select('*, categorias!inner(nombre)')
           .order('id_producto', { ascending: false });
+
+        // Si falla el join, intentar sin él
+        if (error) {
+          console.warn('⚠️ Error con join, intentando sin categorías:', error);
+          const response = await supabase
+            .from('productos')
+            .select('*')
+            .order('id_producto', { ascending: false });
+          
+          productos = response.data;
+          error = response.error;
+        }
 
         if (error) throw error;
 
@@ -828,11 +836,15 @@
         actualizarContador(allProducts.length);
       } catch (error) {
         console.error("❌ Error cargando productos:", error);
+        console.error("Detalles:", error.details, error.hint, error.code);
         lista.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">❌</div>
             <h3>Error al cargar productos</h3>
             <p>${error.message}</p>
+            <p style="font-size: 0.9em; color: #888; margin-top: 10px;">
+              ${error.hint || 'Verifica los permisos de la tabla productos'}
+            </p>
           </div>
         `;
         showNotification("Error al cargar productos", "error");

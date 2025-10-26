@@ -172,7 +172,6 @@
       visibility: visible;
     }
 
-    /* Badge para notificaciones */
     .menu-badge {
       background: #ff4444;
       color: white;
@@ -182,7 +181,6 @@
       margin-left: auto;
     }
 
-    /* Header mejorado */
     header {
       text-align: center;
       padding: 20px 10px 20px 70px;
@@ -205,7 +203,6 @@
       font-size: 1.1em;
     }
 
-    /* Hero Section */
     .hero-section {
       background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
       padding: 80px 20px;
@@ -263,7 +260,6 @@
       box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
     }
 
-    /* Estadísticas */
     .stats-section {
       background: #1a1a1a;
       padding: 60px 20px;
@@ -303,7 +299,6 @@
       color: #ccc;
     }
 
-    /* Sección de Categorías */
     .categories-section {
       padding: 80px 20px;
       background: #111;
@@ -386,13 +381,11 @@
       line-height: 1.5;
     }
 
-    /* Productos Destacados */
     .featured-section {
       background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
       padding: 80px 20px;
     }
 
-    /* Sección de Catálogo Principal */
     .catalog-section {
       padding: 80px 20px;
       background: #111;
@@ -461,17 +454,11 @@
 
     .producto-img {
       width: 100%;
-      height: 150px;
-      object-fit: contain;
+      height: 200px;
+      object-fit: cover;
       border-radius: 10px;
       background: #222;
       margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-      font-size: 0.9em;
-      text-align: center;
     }
 
     .producto-nombre {
@@ -498,7 +485,6 @@
       line-height: 1.4;
     }
 
-    /* Por qué elegirnos */
     .why-us-section {
       background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
       padding: 80px 20px;
@@ -543,7 +529,6 @@
       line-height: 1.6;
     }
 
-    /* Testimonios */
     .testimonials-section {
       background: #111;
       padding: 80px 20px;
@@ -582,7 +567,6 @@
       margin-top: 10px;
     }
 
-    /* Footer mejorado */
     footer {
       background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
       padding: 60px 20px 30px;
@@ -651,9 +635,9 @@
       height: 30px;
       cursor: pointer;
       z-index: 999;
+      opacity: 0;
     }
 
-    /* Estilos para mensajes de carga y error */
     .loading-message {
       text-align: center;
       padding: 40px;
@@ -673,7 +657,6 @@
       grid-column: 1 / -1;
     }
 
-    /* Responsive mejorado */
     @media (max-width: 768px) {
       .hero-title {
         font-size: 2.2em;
@@ -776,7 +759,6 @@
   </style>
 </head>
 <body>
-  <!-- Botón para abrir/cerrar menú -->
   <div class="menu-toggle" id="menuToggle">
     <div class="menu-toggle-icon">
       <span></span>
@@ -785,10 +767,8 @@
     </div>
   </div>
 
-  <!-- Overlay oscuro -->
   <div class="menu-overlay" id="menuOverlay"></div>
 
-  <!-- Menú Lateral -->
   <nav class="side-menu" id="sideMenu">
     <div class="menu-header">
       <div class="menu-logo">VapeDealer MX</div>
@@ -837,22 +817,6 @@
     </div>
 
     <div class="menu-section">
-      <div class="menu-section-title">Cuenta</div>
-      <a href="perfil.html" class="menu-item">
-        <span class="menu-item-icon">👤</span>
-        <span class="menu-item-text">Mi Perfil</span>
-      </a>
-      <a href="#" class="menu-item">
-        <span class="menu-item-icon">❤️</span>
-        <span class="menu-item-text">Favoritos</span>
-      </a>
-      <a href="configuracion.html" class="menu-item">
-        <span class="menu-item-icon">⚙️</span>
-        <span class="menu-item-text">Configuración</span>
-      </a>
-    </div>
-
-    <div class="menu-section">
       <div class="menu-section-title">Ayuda</div>
       <a href="#" class="menu-item">
         <span class="menu-item-icon">💬</span>
@@ -869,13 +833,11 @@
     </div>
   </nav>
 
-  <!-- Header -->
   <header>
     <h1>VapeDealer MX</h1>
     <p>No vendemos humo. Vendemos estilo 💨</p>
   </header>
 
-  <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
       <h2 class="hero-title">La mejor selección de productos</h2>
@@ -887,7 +849,6 @@
     </div>
   </section>
 
-  <!-- Estadísticas -->
   <section class="stats-section">
     <div class="stats-container">
       <div class="stat-item">
@@ -909,7 +870,6 @@
     </div>
   </section>
 
-  <!-- Categorías -->
   <section class="categories-section">
     <h2 class="section-title">Nuestras Categorías</h2>
     <p class="section-subtitle">
@@ -948,7 +908,6 @@
     </div>
   </section>
 
-  <!-- Productos Destacados -->
   <section class="featured-section">
     <div class="section-title">Productos Destacados</div>
     <p class="section-subtitle">
@@ -956,7 +915,6 @@
     </p>
   </section>
 
-  <!-- Catálogo Principal -->
   <section class="catalog-section" id="productos-section">
     <div class="catalog-header">
       <h2 class="section-title">Catálogo Completo</h2>
@@ -978,7 +936,6 @@
     </div>
   </section>
 
-  <!-- Por qué elegirnos -->
   <section class="why-us-section">
     <h2 class="section-title">¿Por qué VapeDealer MX?</h2>
     <p class="section-subtitle">
@@ -1017,7 +974,6 @@
     </div>
   </section>
 
-  <!-- Testimonios -->
   <section class="testimonials-section">
     <h2 class="section-title">Lo que dicen nuestros clientes</h2>
     <p class="section-subtitle">
@@ -1049,7 +1005,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-content">
       <div class="footer-section">
@@ -1082,7 +1037,6 @@
     </div>
   </footer>
 
-  <!-- Botón WhatsApp -->
   <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
   <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>
 
@@ -1091,83 +1045,76 @@
     // Configuración de Supabase
     const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
-
-    // Inicializar Supabase
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Elementos del DOM
     const productosContainer = document.getElementById('productos');
-
-    // Función para crear placeholder de imagen
-    function crearPlaceholderImagen(nombre) {
-      const placeholder = document.createElement('div');
-      placeholder.className = 'producto-img';
-      placeholder.textContent = '🖼️ ' + (nombre || 'Imagen no disponible');
-      return placeholder;
-    }
 
     // Función para cargar productos desde Supabase
     async function cargarProductos() {
       try {
-        // Mostrar mensaje de carga
         productosContainer.innerHTML = '<div class="loading-message">Cargando productos...</div>';
 
-        // Obtener productos de Supabase
+        console.log('🔍 Cargando productos desde Supabase...');
+
         const { data: productos, error } = await supabase
           .from('productos')
           .select('*')
           .order('nombre');
 
         if (error) {
+          console.error('❌ Error de Supabase:', error);
           throw error;
         }
 
-        // Limpiar contenedor
+        console.log('✅ Productos cargados:', productos?.length || 0);
+        console.log('📦 Productos:', productos);
+
         productosContainer.innerHTML = '';
 
-        // Verificar si hay productos
         if (!productos || productos.length === 0) {
           productosContainer.innerHTML = '<div class="error-message">No se encontraron productos</div>';
           return;
         }
 
-        // Crear tarjetas de productos
         productos.forEach(producto => {
           const productoCard = document.createElement('div');
           productoCard.className = 'producto-card';
           
-          // Crear contenido de la tarjeta
-          const contenido = `
+          // Crear la imagen
+          const img = document.createElement('img');
+          img.className = 'producto-img';
+          img.alt = producto.nombre;
+          
+          // CORRECCIÓN: Usar imagen_url en lugar de img_url
+          if (producto.imagen_url) {
+            console.log('🖼️ Cargando imagen:', producto.imagen_url);
+            img.src = producto.imagen_url;
+            img.onerror = function() {
+              console.warn('⚠️ Error cargando imagen:', producto.imagen_url);
+              this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23222"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" fill="%23666" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
+            };
+          } else {
+            console.warn('⚠️ Producto sin imagen:', producto.nombre);
+            img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23222"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" fill="%23666" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
+          }
+          
+          // Crear el contenido
+          const contenido = document.createElement('div');
+          contenido.innerHTML = `
             <h3 class="producto-nombre">${producto.nombre}</h3>
-            <div class="producto-precio">$${producto.precio}</div>
+            <div class="producto-precio">${producto.precio} MXN</div>
             <p class="producto-descripcion">${producto.descripcion || 'Sin descripción disponible'}</p>
           `;
           
-          productoCard.innerHTML = contenido;
-          
-          // Manejar la imagen de manera segura
-          if (producto.img_url) {
-            const img = document.createElement('img');
-            img.src = producto.img_url;
-            img.alt = producto.nombre;
-            img.className = 'producto-img';
-            img.onerror = function() {
-              // Si la imagen falla al cargar, reemplazar con placeholder
-              const placeholder = crearPlaceholderImagen(producto.nombre);
-              productoCard.replaceChild(placeholder, img);
-            };
-            productoCard.insertBefore(img, productoCard.firstChild);
-          } else {
-            // Si no hay URL de imagen, usar placeholder
-            const placeholder = crearPlaceholderImagen(producto.nombre);
-            productoCard.insertBefore(placeholder, productoCard.firstChild);
-          }
-          
+          productoCard.appendChild(img);
+          productoCard.appendChild(contenido);
           productosContainer.appendChild(productoCard);
         });
 
+        console.log('✅ Productos renderizados correctamente');
+
       } catch (error) {
-        console.error('Error al cargar productos:', error);
+        console.error('❌ Error al cargar productos:', error);
         productosContainer.innerHTML = `
           <div class="error-message">
             Error al cargar los productos: ${error.message}
@@ -1181,30 +1128,24 @@
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
 
-    // Cargar estado del menú desde memoria
-    let menuState = {
-      isOpen: false
-    };
+    let menuState = { isOpen: false };
 
-    // Función para abrir el menú
     function openMenu() {
       menuState.isOpen = true;
       sideMenu.classList.add('open');
       menuOverlay.classList.add('open');
       menuToggle.classList.add('open');
-      document.body.style.overflow = 'hidden'; // Prevenir scroll
+      document.body.style.overflow = 'hidden';
     }
 
-    // Función para cerrar el menú
     function closeMenu() {
       menuState.isOpen = false;
       sideMenu.classList.remove('open');
       menuOverlay.classList.remove('open');
       menuToggle.classList.remove('open');
-      document.body.style.overflow = ''; // Restaurar scroll
+      document.body.style.overflow = '';
     }
 
-    // Toggle del menú
     menuToggle.addEventListener('click', () => {
       if (menuState.isOpen) {
         closeMenu();
@@ -1213,10 +1154,8 @@
       }
     });
 
-    // Cerrar al hacer click en el overlay
     menuOverlay.addEventListener('click', closeMenu);
 
-    // Cerrar al hacer click en un link del menú
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
       item.addEventListener('click', () => {
@@ -1224,19 +1163,17 @@
       });
     });
 
-    // Cerrar con tecla ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && menuState.isOpen) {
         closeMenu();
       }
     });
 
-    // Prevenir propagación de clicks dentro del menú
     sideMenu.addEventListener('click', (e) => {
       e.stopPropagation();
     });
 
-    // Smooth scroll para los enlaces internos
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -1252,6 +1189,7 @@
 
     // Cargar productos cuando la página esté lista
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Inicializando VapeDealer MX...');
       cargarProductos();
     });
 
@@ -1259,13 +1197,26 @@
     const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
-        // Remover clase active de todos los botones
         filterButtons.forEach(btn => btn.classList.remove('active'));
-        // Agregar clase active al botón clickeado
         button.classList.add('active');
-        // Recargar productos (aquí puedes implementar filtrado específico)
         cargarProductos();
       });
+    });
+
+    // Acceso admin (5 clicks en el área oculta)
+    let adminClicks = 0;
+    let adminTimeout;
+    document.getElementById('admin-access').addEventListener('click', () => {
+      adminClicks++;
+      clearTimeout(adminTimeout);
+      
+      if (adminClicks >= 5) {
+        window.location.href = 'login.html';
+      }
+      
+      adminTimeout = setTimeout(() => {
+        adminClicks = 0;
+      }, 2000);
     });
   </script>
 </body>
