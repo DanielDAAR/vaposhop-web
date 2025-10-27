@@ -212,6 +212,13 @@
       top: 20px;
     }
 
+    .profile-avatar-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 20px;
+    }
+
     .profile-avatar {
       width: 150px;
       height: 150px;
@@ -221,9 +228,38 @@
       align-items: center;
       justify-content: center;
       font-size: 4em;
-      margin: 0 auto 20px;
       border: 4px solid #333;
       box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-upload-btn {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 40px;
+      height: 40px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      border: 3px solid #1e1e1e;
+    }
+
+    .avatar-upload-btn:hover {
+      transform: scale(1.1);
+      background: #20b358;
     }
 
     .profile-name {
@@ -567,6 +603,80 @@
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
     }
 
+    /* Modal para cambiar foto */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 3001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      border: 2px solid #333;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      font-size: 1.8em;
+      color: white;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      cursor: pointer;
+      font-size: 1.5em;
+      color: #888;
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: #ff4444;
+    }
+
+    .image-preview-modal {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      border: 4px solid #333;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .image-preview-modal img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview-modal .placeholder {
+      font-size: 4em;
+      color: #666;
+    }
+
     @media (max-width: 1024px) {
       .profile-container {
         grid-template-columns: 1fr;
@@ -593,6 +703,10 @@
 
       .profile-stats {
         grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        padding: 25px;
       }
     }
   </style>
@@ -646,7 +760,14 @@
 
   <div class="profile-container">
     <aside class="profile-sidebar">
-      <div class="profile-avatar" id="profileAvatar">👤</div>
+      <div class="profile-avatar-container">
+        <div class="profile-avatar" id="profileAvatar">
+          <span id="avatarInitial">👤</span>
+        </div>
+        <div class="avatar-upload-btn" onclick="abrirModalFoto()" title="Cambiar foto de perfil">
+          📷
+        </div>
+      </div>
       <h2 class="profile-name" id="profileName">Cargando...</h2>
       <p class="profile-email" id="profileEmail">Cargando...</p>
 
@@ -752,6 +873,35 @@
     </main>
   </div>
 
+  <!-- Modal para cambiar foto -->
+  <div id="modalFoto" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        📸 Cambiar Foto de Perfil
+        <span class="modal-close" onclick="cerrarModalFoto()">×</span>
+      </div>
+
+      <div class="image-preview-modal" id="previewModal">
+        <div class="placeholder">👤</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL de la imagen (Imgur, etc.)</label>
+        <input 
+          type="url" 
+          class="form-input" 
+          id="inputFotoUrl" 
+          placeholder="https://i.imgur.com/ejemplo.jpg"
+        />
+      </div>
+
+      <div style="margin-top: 25px; display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="guardarFoto()">Guardar</button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="cerrarModalFoto()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
 
   <div id="notification" class="notification"></div>
@@ -782,11 +932,13 @@
     // ========== VERIFICAR AUTENTICACIÓN ==========
     async function verificarAutenticacion() {
       try {
+        console.log('🔐 INICIANDO verificarAutenticacion()');
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) throw error;
         
         if (!session) {
+          console.log('❌ No hay sesión activa, redirigiendo...');
           showNotification("⚠️ Debes iniciar sesión", "error");
           setTimeout(() => {
             window.location.href = 'login_user.html';
@@ -809,6 +961,9 @@
     // ========== CARGAR DATOS DEL USUARIO ==========
     async function cargarDatosUsuario() {
       try {
+        console.log('👤 INICIANDO cargarDatosUsuario()');
+        console.log('📝 ID Usuario:', currentUser.id);
+        
         const { data, error } = await supabase
           .from('usuarios')
           .select('*')
@@ -816,19 +971,28 @@
           .single();
 
         if (error) {
+          console.error('❌ Error cargando usuario:', error);
           if (error.code === 'PGRST116') {
+            console.log('👤 Usuario no encontrado, creando nuevo...');
             await crearUsuario();
             return;
           }
           throw error;
         }
 
+        console.log('✅ Datos de usuario cargados:', data);
         userData = data;
         mostrarDatosEnPantalla();
+        
+        console.log('🔄 Iniciando carga de pedidos...');
         await cargarPedidos();
+        
+        console.log('🔄 Iniciando carga de estadísticas...');
         await cargarEstadisticas();
+        
       } catch (error) {
-        console.error('❌ Error cargando datos:', error);
+        console.error('💥 ERROR CRÍTICO en cargarDatosUsuario:', error);
+        console.log('🔍 Stack trace:', error.stack);
         showNotification("Error al cargar datos", "error");
       }
     }
@@ -836,6 +1000,7 @@
     // ========== CREAR USUARIO NUEVO ==========
     async function crearUsuario() {
       try {
+        console.log('👤 CREANDO nuevo usuario...');
         const nuevoUsuario = {
           id_usuario: currentUser.id,
           correo: currentUser.email,
@@ -856,6 +1021,7 @@
         userData = data;
         mostrarDatosEnPantalla();
         showNotification("✅ Perfil creado exitosamente", "success");
+        console.log('✅ Nuevo usuario creado:', data);
       } catch (error) {
         console.error('❌ Error creando usuario:', error);
         showNotification("Error al crear perfil", "error");
@@ -864,6 +1030,7 @@
 
     // ========== MOSTRAR DATOS EN PANTALLA ==========
     function mostrarDatosEnPantalla() {
+      console.log('🖥️ Mostrando datos en pantalla...');
       document.getElementById('profileName').textContent = userData.nombre || 'Usuario';
       document.getElementById('profileEmail').textContent = userData.correo;
       document.getElementById('inputNombre').value = userData.nombre || '';
@@ -871,38 +1038,91 @@
       document.getElementById('inputTelefono').value = userData.telefono || '';
       document.getElementById('inputDireccion').value = userData.direccion || '';
       
-      const inicial = userData.nombre ? userData.nombre.charAt(0).toUpperCase() : '👤';
-      document.getElementById('profileAvatar').textContent = inicial;
+      // Manejar la foto de perfil
+      const avatar = document.getElementById('profileAvatar');
+      if (userData.foto_url) {
+        console.log('🖼️ Cargando foto de perfil:', userData.foto_url);
+        avatar.innerHTML = `<img src="${userData.foto_url}" alt="Foto de perfil" onerror="this.style.display='none'; this.parentElement.innerHTML='${userData.nombre ? userData.nombre.charAt(0).toUpperCase() : '👤'}'">`;
+      } else {
+        const inicial = userData.nombre ? userData.nombre.charAt(0).toUpperCase() : '👤';
+        console.log('👤 Usando inicial como avatar:', inicial);
+        avatar.innerHTML = inicial;
+      }
     }
 
-    // ========== CARGAR PEDIDOS ==========
+    // ========== CARGAR PEDIDOS (VERSIÓN CORREGIDA) ==========
     async function cargarPedidos() {
       try {
-        const { data: pedidos, error } = await supabase
+        console.log('🔄 INICIANDO cargarPedidos()');
+        console.log('📝 ID Usuario:', userData.id_usuario);
+        
+        // Primero obtener los pedidos
+        console.log('📦 Consultando pedidos...');
+        const { data: pedidos, error: pedidosError } = await supabase
           .from('pedidos')
-          .select(`
-            *,
-            detalle_pedidos (
-              cantidad,
-              precio_unitario,
-              productos (
-                nombre
-              )
-            )
-          `)
+          .select('*')
           .eq('id_usuario', userData.id_usuario)
           .order('fecha', { ascending: false })
           .limit(5);
 
-        if (error) throw error;
+        if (pedidosError) {
+          console.error('❌ Error en consulta de pedidos:', pedidosError);
+          console.log('🔍 Detalles del error:', {
+            message: pedidosError.message,
+            code: pedidosError.code,
+            details: pedidosError.details
+          });
+          throw pedidosError;
+        }
 
-        mostrarPedidos(pedidos || []);
+        console.log('✅ Pedidos encontrados:', pedidos?.length || 0);
+        console.log('📋 Lista de pedidos:', pedidos);
+
+        if (!pedidos || pedidos.length === 0) {
+          console.log('📭 No hay pedidos, mostrando estado vacío');
+          mostrarPedidos([]);
+          return;
+        }
+
+        console.log('🔍 Obteniendo detalles para cada pedido...');
+        // Luego obtener los detalles para cada pedido
+        const pedidosConDetalles = await Promise.all(
+          pedidos.map(async (pedido, index) => {
+            console.log(`📋 Procesando pedido ${index + 1}/${pedidos.length}:`, pedido.id_pedido);
+            
+            const { data: detalles, error: detallesError } = await supabase
+              .from('detalle_pedidos')
+              .select(`
+                cantidad,
+                precio_unitario,
+                productos (
+                  nombre
+                )
+              `)
+              .eq('id_pedido', pedido.id_pedido);
+
+            if (detallesError) {
+              console.error(`❌ Error cargando detalles para pedido ${pedido.id_pedido}:`, detallesError);
+              return { ...pedido, detalle_pedidos: [] };
+            }
+
+            console.log(`✅ Detalles del pedido ${pedido.id_pedido}:`, detalles?.length || 0, 'productos');
+            return { ...pedido, detalle_pedidos: detalles || [] };
+          })
+        );
+
+        console.log('🎉 Todos los pedidos procesados:', pedidosConDetalles);
+        mostrarPedidos(pedidosConDetalles);
+        
       } catch (error) {
-        console.error('Error cargando pedidos:', error);
+        console.error('💥 ERROR CRÍTICO en cargarPedidos:', error);
+        console.log('🔍 Stack trace:', error.stack);
         document.getElementById('pedidosContainer').innerHTML = `
           <div class="empty-state">
-            <div class="empty-state-icon">📦</div>
-            <p>No se pudieron cargar los pedidos</p>
+            <div class="empty-state-icon">❌</div>
+            <p>Error al cargar pedidos</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">${error.message}</p>
+            <button class="btn btn-primary" onclick="cargarPedidos()" style="margin-top: 15px;">Reintentar</button>
           </div>
         `;
       }
@@ -910,6 +1130,7 @@
 
     // ========== MOSTRAR PEDIDOS EN HTML ==========
     function mostrarPedidos(pedidos) {
+      console.log('📄 Mostrando pedidos en HTML:', pedidos?.length || 0);
       const container = document.getElementById('pedidosContainer');
       
       if (!pedidos || pedidos.length === 0) {
@@ -925,7 +1146,7 @@
 
       const pedidosHTML = pedidos.map(pedido => {
         const total = calcularTotalPedido(pedido.detalle_pedidos);
-        const productos = pedido.detalle_pedidos.map(d => d.productos.nombre).join(', ');
+        const productos = pedido.detalle_pedidos.map(d => d.productos?.nombre || 'Producto').join(', ');
         const fecha = new Date(pedido.fecha).toLocaleDateString('es-MX', {
           year: 'numeric',
           month: 'long',
@@ -957,7 +1178,7 @@
               <div class="order-products">🛍️ ${productos}</div>
             </div>
             <div class="order-footer">
-              <div class="order-price">${total.toFixed(2)}</div>
+              <div class="order-price">$${total.toFixed(2)}</div>
               <button class="btn btn-secondary btn-small" onclick="verDetallePedido('${pedido.id_pedido}')">Ver Detalles</button>
             </div>
           </div>
@@ -975,71 +1196,193 @@
       }, 0);
     }
 
-    // ========== VER DETALLE DEL PEDIDO ==========
-    window.verDetallePedido = async function(idPedido) {
-      try {
-        const { data, error } = await supabase
-          .from('pedidos')
-          .select(`
-            *,
-            detalle_pedidos (
-              cantidad,
-              precio_unitario,
-              productos (
-                nombre,
-                descripcion
-              )
-            )
-          `)
-          .eq('id_pedido', idPedido)
-          .single();
-
-        if (error) throw error;
-
-        const detalles = data.detalle_pedidos.map(d => 
-          `${d.cantidad}x ${d.productos.nombre} - ${d.precio_unitario}`
-        ).join('\n');
-
-        alert(`Detalles del Pedido\n\nFecha: ${new Date(data.fecha).toLocaleDateString('es-MX')}\nEstado: ${data.estado}\n\nProductos:\n${detalles}\n\nTotal: ${calcularTotalPedido(data.detalle_pedidos).toFixed(2)}`);
-      } catch (error) {
-        console.error('Error:', error);
-        showNotification("Error al cargar detalles", "error");
-      }
-    };
-
-    // ========== CARGAR ESTADÍSTICAS ==========
+    // ========== CARGAR ESTADÍSTICAS (VERSIÓN CORREGIDA) ==========
     async function cargarEstadisticas() {
       try {
-        const { data: pedidos, error } = await supabase
+        console.log('📊 INICIANDO cargarEstadisticas()');
+        console.log('📝 ID Usuario:', userData.id_usuario);
+        
+        // Primero obtener los pedidos
+        console.log('📦 Consultando pedidos para estadísticas...');
+        const { data: pedidos, error: pedidosError } = await supabase
           .from('pedidos')
-          .select(`
-            id_pedido,
-            detalle_pedidos (
-              cantidad,
-              precio_unitario
-            )
-          `)
+          .select('id_pedido')
           .eq('id_usuario', userData.id_usuario);
 
-        if (error) throw error;
+        if (pedidosError) {
+          console.error('❌ Error en consulta de estadísticas:', pedidosError);
+          console.log('🔍 Detalles del error:', {
+            message: pedidosError.message,
+            code: pedidosError.code,
+            details: pedidosError.details
+          });
+          throw pedidosError;
+        }
 
+        console.log('📊 Total de pedidos encontrados:', pedidos?.length || 0);
         const totalPedidos = pedidos ? pedidos.length : 0;
-        const totalGastado = pedidos ? pedidos.reduce((sum, pedido) => {
-          return sum + calcularTotalPedido(pedido.detalle_pedidos);
-        }, 0) : 0;
+        
+        // Calcular total gastado obteniendo detalles de cada pedido
+        let totalGastado = 0;
+        
+        if (pedidos && pedidos.length > 0) {
+          console.log('💰 Calculando total gastado...');
+          for (let i = 0; i < pedidos.length; i++) {
+            const pedido = pedidos[i];
+            console.log(`🔍 Procesando pedido ${i + 1}/${pedidos.length}:`, pedido.id_pedido);
+            
+            const { data: detalles, error: detallesError } = await supabase
+              .from('detalle_pedidos')
+              .select('cantidad, precio_unitario')
+              .eq('id_pedido', pedido.id_pedido);
+
+            if (detallesError) {
+              console.error(`❌ Error en detalles del pedido ${pedido.id_pedido}:`, detallesError);
+              continue;
+            }
+
+            if (detalles && detalles.length > 0) {
+              const totalPedido = detalles.reduce((sum, detalle) => {
+                return sum + (detalle.cantidad * detalle.precio_unitario);
+              }, 0);
+              console.log(`💰 Pedido ${pedido.id_pedido}: $${totalPedido.toFixed(2)}`);
+              totalGastado += totalPedido;
+            }
+          }
+        }
+
+        console.log('✅ Estadísticas finales:', {
+          totalPedidos,
+          totalGastado: `$${totalGastado.toFixed(2)}`
+        });
 
         document.getElementById('totalPedidos').textContent = totalPedidos;
-        document.getElementById('totalGastado').textContent = `${totalGastado.toFixed(2)}`;
+        document.getElementById('totalGastado').textContent = `$${totalGastado.toFixed(2)}`;
+        
       } catch (error) {
-        console.error('Error cargando estadísticas:', error);
+        console.error('💥 ERROR CRÍTICO en cargarEstadisticas:', error);
+        console.log('🔍 Stack trace:', error.stack);
         document.getElementById('totalPedidos').textContent = '0';
         document.getElementById('totalGastado').textContent = '$0';
       }
     }
 
+    // ========== MODAL FOTO DE PERFIL ==========
+    window.abrirModalFoto = function() {
+      console.log('📸 Abriendo modal de foto...');
+      const modal = document.getElementById('modalFoto');
+      const preview = document.getElementById('previewModal');
+      const inputUrl = document.getElementById('inputFotoUrl');
+      
+      // Limpiar inputs
+      inputUrl.value = '';
+      preview.innerHTML = '<div class="placeholder">👤</div>';
+      
+      modal.classList.add('show');
+    };
+
+    window.cerrarModalFoto = function() {
+      console.log('❌ Cerrando modal de foto...');
+      const modal = document.getElementById('modalFoto');
+      modal.classList.remove('show');
+    };
+
+    window.guardarFoto = async function() {
+      console.log('💾 Guardando foto...');
+      const inputUrl = document.getElementById('inputFotoUrl');
+      const url = inputUrl.value.trim();
+      
+      if (!url) {
+        showNotification("Ingresa una URL válida", "error");
+        return;
+      }
+
+      try {
+        // Validar que sea una URL válida
+        if (!url.startsWith('http')) {
+          showNotification("La URL debe comenzar con http:// o https://", "error");
+          return;
+        }
+
+        const { error } = await supabase
+          .from('usuarios')
+          .update({ foto_url: url })
+          .eq('id_usuario', userData.id_usuario);
+
+        if (error) throw error;
+
+        // Actualizar la vista
+        const avatar = document.getElementById('profileAvatar');
+        avatar.innerHTML = `<img src="${url}" alt="Foto de perfil" onerror="this.style.display='none'; this.parentElement.innerHTML='${userData.nombre ? userData.nombre.charAt(0).toUpperCase() : '👤'}'">`;
+        
+        userData.foto_url = url;
+        cerrarModalFoto();
+        showNotification("✅ Foto de perfil actualizada", "success");
+      } catch (error) {
+        console.error('Error guardando foto:', error);
+        showNotification("Error al guardar la foto", "error");
+      }
+    };
+
+    // ========== MEJORAR verDetallePedido ==========
+    window.verDetallePedido = async function(idPedido) {
+      try {
+        console.log('🔍 Ver detalles del pedido:', idPedido);
+        // Obtener el pedido
+        const { data: pedido, error: pedidoError } = await supabase
+          .from('pedidos')
+          .select('*')
+          .eq('id_pedido', idPedido)
+          .single();
+
+        if (pedidoError) throw pedidoError;
+
+        // Obtener los detalles del pedido
+        const { data: detalles, error: detallesError } = await supabase
+          .from('detalle_pedidos')
+          .select(`
+            cantidad,
+            precio_unitario,
+            productos (
+              nombre,
+              descripcion
+            )
+          `)
+          .eq('id_pedido', idPedido);
+
+        if (detallesError) throw detallesError;
+
+        const productosDetalles = detalles.map(d => 
+          `${d.cantidad}x ${d.productos.nombre} - $${d.precio_unitario} c/u`
+        ).join('\n');
+
+        const total = calcularTotalPedido(detalles);
+        
+        const mensaje = `📦 Detalles del Pedido #${idPedido.substring(0, 8)}
+
+📅 Fecha: ${new Date(pedido.fecha).toLocaleDateString('es-MX', { 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+})}
+📋 Estado: ${pedido.estado}
+
+🛍️ Productos:
+${productosDetalles}
+
+💰 Total: $${total.toFixed(2)}`;
+
+        alert(mensaje);
+      } catch (error) {
+        console.error('Error cargando detalles del pedido:', error);
+        showNotification("Error al cargar detalles del pedido", "error");
+      }
+    };
+
     // ========== GUARDAR CAMBIOS ==========
     window.guardarCambios = async function() {
       try {
+        console.log('💾 Guardando cambios...');
         const nombre = document.getElementById('inputNombre').value.trim();
         const telefono = document.getElementById('inputTelefono').value.trim();
         const direccion = document.getElementById('inputDireccion').value.trim();
@@ -1075,6 +1418,7 @@
     // ========== CAMBIAR CONTRASEÑA ==========
     window.cambiarContrasena = async function() {
       try {
+        console.log('🔐 Cambiando contraseña...');
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -1112,6 +1456,7 @@
     // ========== CERRAR SESIÓN ==========
     window.cerrarSesion = async function() {
       try {
+        console.log('🚪 Cerrando sesión...');
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
 
@@ -1126,68 +1471,68 @@
     };
 
     window.eliminarCuenta = async function() {
-  if (!confirm('¿Estás seguro de que deseas eliminar tu cuenta?\n\nEsta acción eliminará:\n- Tu perfil\n- Todos tus pedidos\n- Todo tu historial\n\nEsta acción NO se puede deshacer.')) return;
-  if (!confirm('¿REALMENTE SEGURO? Esta es tu última oportunidad.')) return;
+      if (!confirm('¿Estás seguro de que deseas eliminar tu cuenta?\n\nEsta acción eliminará:\n- Tu perfil\n- Todos tus pedidos\n- Todo tu historial\n\nEsta acción NO se puede deshacer.')) return;
+      if (!confirm('¿REALMENTE SEGURO? Esta es tu última oportunidad.')) return;
 
-  try {
-    if (!userData || !userData.id_usuario) throw new Error("No se encontró el ID del usuario.");
+      try {
+        console.log('🗑️ Eliminando cuenta...');
+        if (!userData || !userData.id_usuario) throw new Error("No se encontró el ID del usuario.");
 
-    const idUsuario = userData.id_usuario;
+        const idUsuario = userData.id_usuario;
 
-    // === 1. Obtener pedidos del usuario ===
-    const { data: pedidos, error: errorPedidos } = await supabase
-      .from('pedidos')
-      .select('id_pedido')
-      .eq('id_usuario', idUsuario);
+        // === 1. Obtener pedidos del usuario ===
+        const { data: pedidos, error: errorPedidos } = await supabase
+          .from('pedidos')
+          .select('id_pedido')
+          .eq('id_usuario', idUsuario);
 
-    if (errorPedidos) throw errorPedidos;
+        if (errorPedidos) throw errorPedidos;
 
-    if (pedidos && pedidos.length > 0) {
-      const idsPedidos = pedidos.map(p => p.id_pedido);
+        if (pedidos && pedidos.length > 0) {
+          const idsPedidos = pedidos.map(p => p.id_pedido);
 
-      // === 2. Eliminar detalle de pedidos ===
-      const { error: errorDetalles } = await supabase
-        .from('detalle_pedidos')
-        .delete()
-        .in('id_pedido', idsPedidos);
-      if (errorDetalles) throw errorDetalles;
+          // === 2. Eliminar detalle de pedidos ===
+          const { error: errorDetalles } = await supabase
+            .from('detalle_pedidos')
+            .delete()
+            .in('id_pedido', idsPedidos);
+          if (errorDetalles) throw errorDetalles;
 
-      // === 3. Eliminar pagos relacionados ===
-      const { error: errorPagos } = await supabase
-        .from('pagos')
-        .delete()
-        .in('id_pedido', idsPedidos);
-      if (errorPagos) throw errorPagos;
+          // === 3. Eliminar pagos relacionados ===
+          const { error: errorPagos } = await supabase
+            .from('pagos')
+            .delete()
+            .in('id_pedido', idsPedidos);
+          if (errorPagos) throw errorPagos;
+        }
+
+        // === 4. Eliminar pedidos ===
+        const { error: errorBorrarPedidos } = await supabase
+          .from('pedidos')
+          .delete()
+          .eq('id_usuario', idUsuario);
+        if (errorBorrarPedidos) throw errorBorrarPedidos;
+
+        // === 5. Eliminar usuario ===
+        const { error: errorBorrarUsuario } = await supabase
+          .from('usuarios')
+          .delete()
+          .eq('id_usuario', idUsuario);
+        if (errorBorrarUsuario) throw errorBorrarUsuario;
+
+        showNotification('✅ Tu cuenta y todos tus datos han sido eliminados.', 'success');
+
+        // === 6. Cerrar sesión y redirigir ===
+        await supabase.auth.signOut();
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+
+      } catch (err) {
+        console.error('❌ Error al eliminar cuenta:', err);
+        showNotification('❌ No se pudo eliminar tu cuenta. Verifica consola.', 'error');
+      }
     }
-
-    // === 4. Eliminar pedidos ===
-    const { error: errorBorrarPedidos } = await supabase
-      .from('pedidos')
-      .delete()
-      .eq('id_usuario', idUsuario);
-    if (errorBorrarPedidos) throw errorBorrarPedidos;
-
-    // === 5. Eliminar usuario ===
-    const { error: errorBorrarUsuario } = await supabase
-      .from('usuarios')
-      .delete()
-      .eq('id_usuario', idUsuario);
-    if (errorBorrarUsuario) throw errorBorrarUsuario;
-
-    showNotification('✅ Tu cuenta y todos tus datos han sido eliminados.', 'success');
-
-    // === 6. Cerrar sesión y redirigir ===
-    await supabase.auth.signOut();
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 2000);
-
-  } catch (err) {
-    console.error('❌ Error al eliminar cuenta:', err);
-    showNotification('❌ No se pudo eliminar tu cuenta. Verifica consola.', 'error');
-  }
-}
-
 
     // ========== MENÚ LATERAL ==========
     const menuToggle = document.getElementById('menuToggle');
@@ -1229,7 +1574,9 @@
     });
 
     // ========== INICIALIZAR ==========
+    console.log('🚀 Inicializando aplicación...');
     verificarAutenticacion();
+    //listo
   </script>
 </body>
 </html>
