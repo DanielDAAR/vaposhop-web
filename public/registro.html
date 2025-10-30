@@ -173,19 +173,6 @@
       transform: translateY(0);
     }
 
-    .btn-secondary {
-      background: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      color: #b0b0b0;
-      margin-top: 15px;
-    }
-
-    .btn-secondary:hover {
-      border-color: #00ff80;
-      color: #00ff80;
-      background: rgba(0, 255, 128, 0.05);
-    }
-
     .message { 
       margin-top: 15px; 
       font-size: 14px; 
@@ -303,6 +290,27 @@
       line-height: 1.4;
     }
 
+    .resend-button {
+      background: transparent;
+      border: 1px solid #00ff80;
+      color: #00ff80;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    .resend-button:hover {
+      background: rgba(0, 255, 128, 0.1);
+    }
+
+    .resend-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     @media (max-width: 480px) {
       .registro-container {
         padding: 30px 25px;
@@ -389,6 +397,8 @@
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs";
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+    let resendCooldown = 0;
+
     // ========== TOGGLE PASSWORD VISIBILITY ==========
     document.getElementById("togglePassword").addEventListener("click", () => {
       const passwordInput = document.getElementById("password");
@@ -429,7 +439,7 @@
     // ========== MESSAGES ==========
     function showMessage(msg, type = "info") {
       const m = document.getElementById("message");
-      m.textContent = msg;
+      m.innerHTML = msg;
       m.className = "message " + type;
     }
 
@@ -447,26 +457,22 @@
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
 
-      // Validar campos vacíos
       if (!nombre || !telefono || !correo || !password || !confirmPassword) {
         showMessage("Por favor completa todos los campos", "error");
         return false;
       }
 
-      // Validar formato de email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(correo)) {
         showMessage("Por favor ingresa un correo electrónico válido", "error");
         return false;
       }
 
-      // Validar longitud de contraseña
       if (password.length < 6) {
         showMessage("La contraseña debe tener al menos 6 caracteres", "error");
         return false;
       }
 
-      // Validar coincidencia de contraseñas
       if (password !== confirmPassword) {
         showMessage("Las contraseñas no coinciden", "error");
         return false;
@@ -475,7 +481,7 @@
       return true;
     }
 
-    // ========== REGISTER FORM ==========
+    // ========== REGISTER FORM - CON GMAIL SMTP ==========
     document.getElementById("register-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       clearMessages();
@@ -493,7 +499,7 @@
       const password = document.getElementById("password").value;
 
       try {
-        // 1. Crear usuario en Auth
+        // 1. Crear usuario en Auth - CON CONFIRMACIÓN DE EMAIL
         const { data: authData, error: authError } = await supabase.auth.signUp({ 
           email: correo, 
           password: password,
@@ -501,49 +507,81 @@
             data: {
               full_name: nombre,
               phone: telefono
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/login_user.html?message=email_confirmed`
           }
         });
 
-        if (authError) throw authError;
+        if (authError) {
+          console.error("Error de autenticación:", authError);
+          
+          if (authError.message?.includes("already registered")) {
+            showMessage("⚠️ Este correo ya está registrado. <a href='login_user.html' style='color:#00ff80;text-decoration:underline;'>Inicia sesión aquí</a>", "error");
+          } else {
+            throw authError;
+          }
+          return;
+        }
 
         if (authData.user) {
+          console.log("Usuario creado en Auth:", authData.user);
+          
           // 2. Crear registro en tabla usuarios
-          const { error: insertError } = await supabase.from("usuarios").insert([{
-            id_usuario: authData.user.id,
-            nombre: nombre,
-            telefono: telefono,
-            correo: correo,
-            direccion: '',
-            rol: 'cliente' // Rol por defecto
-          }]);
+          const { data: userData, error: insertError } = await supabase
+            .from("usuarios")
+            .insert([{
+              id_usuario: authData.user.id,
+              nombre: nombre,
+              telefono: telefono,
+              correo: correo,
+              direccion: '',
+              rol: 'cliente',
+              created_at: new Date().toISOString()
+            }])
+            .select();
 
           if (insertError) {
-            // Si hay error al insertar, eliminar el usuario de auth
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            throw insertError;
+            console.error("Error insertando usuario:", insertError);
+            if (insertError.code !== '23505') {
+              throw insertError;
+            }
           }
 
-          showMessage("✅ ¡Registro exitoso! Revisa tu correo para confirmar tu cuenta.", "success");
-          
-          // Redirigir después de 3 segundos
-          setTimeout(() => {
-            window.location.href = "login_user.html?message=confirm_email";
-          }, 3000);
+          // Manejar respuesta de confirmación
+          if (authData.user.identities && authData.user.identities.length === 0) {
+            showMessage("⚠️ Este correo ya está registrado. <a href='login_user.html' style='color:#00ff80;text-decoration:underline;'>Inicia sesión aquí</a>", "error");
+          } else if (authData.user.confirmed_at) {
+            showMessage("✅ ¡Cuenta creada exitosamente! Ya puedes iniciar sesión.", "success");
+            setTimeout(() => {
+              window.location.href = "login_user.html";
+            }, 2000);
+          } else {
+            // Email de confirmación enviado
+            showMessage(`
+              ✅ ¡Registro exitoso!<br>
+              📧 <strong>Revisa tu correo para confirmar tu cuenta</strong><br>
+              ⚠️ Si no lo ves en 2 minutos, revisa la carpeta de <strong>spam</strong>
+              <br><br>
+              <button class="resend-button" onclick="resendConfirmationEmail()" id="resendBtn">
+                🔄 Reenviar confirmación
+              </button>
+              <span id="cooldownText" style="font-size:0.8em;color:#888;margin-left:10px;"></span>
+            `, "success");
+            
+            startResendCooldown();
+          }
         }
       } catch (error) {
-        console.error("❌ Error en registro:", error);
+        console.error("❌ Error completo en registro:", error);
         
-        let errorMessage = "Error en el registro";
+        let errorMessage = "Error en el registro. Intenta nuevamente.";
         
-        if (error.message.includes("User already registered")) {
-          errorMessage = "Este correo ya está registrado";
-        } else if (error.message.includes("Invalid email")) {
+        if (error.message?.includes("User already registered")) {
+          errorMessage = "Este correo ya está registrado. <a href='login_user.html' style='color:#00ff80;text-decoration:underline;'>Inicia sesión aquí</a>";
+        } else if (error.message?.includes("Invalid email")) {
           errorMessage = "Correo electrónico no válido";
-        } else if (error.message.includes("Password should be at least")) {
+        } else if (error.message?.includes("Password should be at least")) {
           errorMessage = "La contraseña debe tener al menos 6 caracteres";
-        } else if (error.message.includes("duplicate key")) {
-          errorMessage = "Este usuario ya existe";
         }
         
         showMessage(`❌ ${errorMessage}`, "error");
@@ -553,6 +591,85 @@
         registerBtn.textContent = "Crear Cuenta";
       }
     });
+
+    // ========== FUNCIÓN PARA REENVIAR CONFIRMACIÓN ==========
+    async function resendConfirmationEmail() {
+      const correo = document.getElementById("correo").value.trim();
+      const resendBtn = document.getElementById("resendBtn");
+      const cooldownText = document.getElementById("cooldownText");
+      
+      if (!correo) {
+        showMessage("Por favor ingresa tu correo electrónico", "error");
+        return;
+      }
+
+      if (resendCooldown > 0) {
+        showMessage(`⏳ Espera ${resendCooldown} segundos antes de reenviar`, "info");
+        return;
+      }
+
+      try {
+        resendBtn.disabled = true;
+        resendBtn.textContent = "Enviando...";
+        
+        const { error } = await supabase.auth.resend({
+          type: 'signup',
+          email: correo,
+          options: {
+            emailRedirectTo: `${window.location.origin}/login_user.html?message=email_confirmed`
+          }
+        });
+
+        if (error) throw error;
+
+        showMessage("✅ Correo de confirmación reenviado. Revisa tu bandeja de entrada y spam.", "success");
+        startResendCooldown();
+        
+      } catch (error) {
+        console.error("Error reenviando confirmación:", error);
+        showMessage("❌ Error al reenviar el correo. Intenta más tarde.", "error");
+      } finally {
+        setTimeout(() => {
+          if (resendBtn) {
+            resendBtn.disabled = resendCooldown > 0;
+            resendBtn.textContent = "🔄 Reenviar confirmación";
+          }
+        }, 2000);
+      }
+    }
+
+    // ========== COOLDOWN PARA REENVÍO ==========
+    function startResendCooldown() {
+      resendCooldown = 60;
+      const cooldownText = document.getElementById("cooldownText");
+      const resendBtn = document.getElementById("resendBtn");
+      
+      if (cooldownText) {
+        cooldownText.textContent = `(Espera ${resendCooldown}s)`;
+      }
+      
+      if (resendBtn) {
+        resendBtn.disabled = true;
+      }
+      
+      const countdown = setInterval(() => {
+        resendCooldown--;
+        
+        if (cooldownText) {
+          cooldownText.textContent = `(Espera ${resendCooldown}s)`;
+        }
+        
+        if (resendCooldown <= 0) {
+          clearInterval(countdown);
+          if (cooldownText) {
+            cooldownText.textContent = "";
+          }
+          if (resendBtn) {
+            resendBtn.disabled = false;
+          }
+        }
+      }, 1000);
+    }
 
     // ========== ENTER KEY SHORTCUT ==========
     document.addEventListener("keydown", (e) => {
@@ -566,11 +683,10 @@
       const urlParams = new URLSearchParams(window.location.search);
       const message = urlParams.get('message');
       
-      if (message === 'confirm_email') {
-        showMessage("Por favor confirma tu correo electrónico antes de iniciar sesión", "info");
+      if (message === 'email_confirmed') {
+        showMessage("✅ ¡Correo confirmado exitosamente! Ya puedes iniciar sesión.", "success");
       }
       
-      // Enfocar primer campo
       document.getElementById("nombre").focus();
     });
   </script>
