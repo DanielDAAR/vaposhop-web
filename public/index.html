@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VapeDealer MX</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: white;
+      line-height: 1.6;
+    }
+
+    /* Menú Lateral */
+    .side-menu {
+      position: fixed;
+      left: -300px;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+      z-index: 2000;
+      transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      overflow-y: auto;
+      border-right: 2px solid #333;
+    }
+
+    .side-menu.open {
+      left: 0;
+    }
+
+    .menu-header {
+      padding: 25px 20px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      border-bottom: 2px solid #1a8f47;
+    }
+
+    .menu-logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .menu-tagline {
+      font-size: 0.9em;
+      color: rgba(255,255,255,0.9);
+      font-style: italic;
+    }
+
+    .menu-section {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+    }
+
+    .menu-section-title {
+      font-size: 0.85em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #ccc;
+      border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: rgba(37, 211, 102, 0.1);
+      border-color: #25D366;
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .menu-item-icon {
+      font-size: 1.3em;
+      margin-right: 15px;
+      min-width: 25px;
+      text-align: center;
+    }
+
+    .menu-item-text {
+      flex: 1;
+      font-size: 0.95em;
+    }
+
+    .menu-toggle {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2001;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    .menu-toggle-icon {
+      width: 24px;
+      height: 18px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-toggle-icon span {
+      width: 100%;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .menu-badge {
+      background: #ff4444;
+      color: white;
+      font-size: 0.7em;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: auto;
+      font-weight: bold;
+    }
+
+    /* Botón de Carrito Flotante */
+    .cart-button {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .cart-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    .cart-button-icon {
+      font-size: 1.8em;
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff4444;
+      color: white;
+      font-size: 0.5em;
+      padding: 4px 7px;
+      border-radius: 50%;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 10px 20px 70px;
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      border-bottom: 2px solid #333;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      font-style: italic;
+      color: #ccc;
+      font-size: 1.1em;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 211, 102, 0.1) 0%, transparent 70%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-subtitle {
+      font-size: 1.3em;
+      color: #ccc;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+    }
+
+    .stats-section {
+      background: #1a1a1a;
+      padding: 60px 20px;
+      border-top: 1px solid #333;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+      border-radius: 15px;
+      border: 1px solid #333;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #25D366;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 1.1em;
+      color: #ccc;
+    }
+
+    .categories-section {
+      padding: 80px 20px;
+      background: #111;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.2em;
+      color: #ccc;
+      margin-bottom: 50px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .categories-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .category-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      border: 2px solid #333;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37, 211, 102, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .category-card:hover::before {
+      left: 100%;
+    }
+
+    .category-card:hover {
+      transform: translateY(-10px);
+      border-color: #25D366;
+      box-shadow: 0 15px 30px rgba(37, 211, 102, 0.2);
+    }
+
+    .category-icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .category-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .category-description {
+      color: #ccc;
+      font-size: 1em;
+      line-height: 1.5;
+    }
+
+    .featured-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 80px 20px;
+    }
+
+    .catalog-section {
+      padding: 80px 20px;
+      background: #111;
+    }
+
+    .catalog-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .filter-bar {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-btn {
+      padding: 12px 25px;
+      background: #2a2a2a;
+      border: 2px solid #333;
+      border-radius: 25px;
+      color: #ccc;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: #25D366;
+      border-color: #25D366;
+      color: white;
+    }
+
+    #productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .producto-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid #333;
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .producto-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(37, 211, 102, 0.2);
+      border-color: #25D366;
+    }
+
+    .producto-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #222;
+      margin-bottom: 15px;
+    }
+
+    .producto-nombre {
+      margin: 15px 0 10px;
+      font-weight: 600;
+      font-size: 1.1em;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .producto-precio {
+      color: #25D366;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    .producto-descripcion {
+      font-size: 0.9em;
+      color: #ccc;
+      height: 45px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+      margin-bottom: 15px;
+    }
+
+    .producto-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn-agregar-carrito {
+      flex: 1;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-agregar-carrito:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-agregar-carrito:active {
+      transform: scale(0.95);
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    .why-us-section {
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      padding: 80px 20px;
+    }
+
+    .features-grid {
+      max-width: 1200px;
+      margin: 50px auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+    }
+
+    .feature-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 15px;
+      border: 1px solid #333;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #25D366;
+    }
+
+    .feature-title {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .feature-description {
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .testimonials-section {
+      background: #111;
+      padding: 80px 20px;
+      position: relative;
+    }
+
+    .testimonials-grid {
+      max-width: 1200px;
+      margin: 50px auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .testimonial-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      padding: 30px;
+      border-radius: 15px;
+      border-left: 4px solid #25D366;
+      position: relative;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      color: #ccc;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .testimonial-author {
+      color: #25D366;
+      font-weight: bold;
+    }
+
+    .testimonial-rating {
+      color: #ffd700;
+      margin-top: 10px;
+    }
+
+    .testimonial-date {
+      color: #888;
+      font-size: 0.8em;
+      margin-top: 5px;
+    }
+
+    /* Botón para agregar testimonio */
+    .add-testimonial-btn {
+      position: absolute;
+      top: 30px;
+      right: 20px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-testimonial-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    /* Modal para agregar testimonio */
+    .testimonial-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .testimonial-modal.open {
+      display: flex;
+    }
+
+    .testimonial-modal-content {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      border: 2px solid #25D366;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .testimonial-modal-title {
+      font-size: 1.8em;
+      color: #25D366;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .rating-stars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .star {
+      font-size: 2em;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.3s ease;
+    }
+
+    .star.active {
+      color: #ffd700;
+    }
+
+    .testimonial-textarea {
+      width: 100%;
+      padding: 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      color: white;
+      font-size: 1em;
+      resize: vertical;
+      min-height: 120px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    .testimonial-textarea:focus {
+      outline: none;
+      border-color: #25D366;
+    }
+
+    .char-counter {
+      text-align: right;
+      color: #888;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+
+    .char-counter.warning {
+      color: #ffa500;
+    }
+
+    .char-counter.error {
+      color: #ff4444;
+    }
+
+    .testimonial-modal-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .testimonial-btn {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .testimonial-btn-primary {
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+    }
+
+    .testimonial-btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    .testimonial-btn-secondary {
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #333;
+    }
+
+    .testimonial-btn-secondary:hover {
+      background: #333;
+    }
+
+    .testimonial-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .testimonial-login-message {
+      text-align: center;
+      padding: 40px;
+      color: #ccc;
+    }
+
+    .testimonial-login-btn {
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .testimonial-login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    }
+
+    footer {
+      background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+      padding: 60px 20px 30px;
+      border-top: 2px solid #333;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .footer-section h3 {
+      color: #25D366;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      line-height: 1.8;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #25D366;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid #333;
+      color: #666;
+    }
+
+    a.whatsapp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      padding: 15px 20px;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    a.whatsapp:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    #admin-access {
+      position: fixed;
+      bottom: 5px;
+      left: 5px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      z-index: 999;
+      opacity: 0;
+    }
+
+    .loading-message {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+      color: #25D366;
+      grid-column: 1 / -1;
+    }
+
+    .error-message {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+      color: #ff4444;
+      background: rgba(255, 68, 68, 0.1);
+      border-radius: 10px;
+      margin: 20px;
+      grid-column: 1 / -1;
+    }
+
+    .success-toast {
+      position: fixed;
+      bottom: 160px;
+      right: 20px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      z-index: 2000;
+      animation: slideIn 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.2em;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1em;
+      }
+
+      .section-title {
+        font-size: 2em;
+      }
+
+      .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #productos {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 15px;
+      }
+
+      .producto-card {
+        max-width: 100%;
+        padding: 20px;
+      }
+
+      .producto-img {
+        height: 180px;
+      }
+
+      a.whatsapp {
+        bottom: 15px;
+        right: 15px;
+        padding: 12px 16px;
+        font-size: 0.9em;
+      }
+
+      .cart-button {
+        bottom: 85px;
+        width: 55px;
+        height: 55px;
+      }
+
+      .side-menu {
+        width: 280px;
+        left: -280px;
+      }
+
+      .menu-toggle {
+        width: 45px;
+        height: 45px;
+        left: 15px;
+        top: 15px;
+      }
+
+      .producto-actions {
+        flex-direction: column;
+      }
+
+      .add-testimonial-btn {
+        position: static;
+        margin: 0 auto 30px;
+        display: block;
+      }
+
+      .testimonial-modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+      }
+
+      .testimonial-modal-buttons {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section {
+        padding: 60px 15px;
+      }
+
+      header h1 {
+        font-size: 2em;
+      }
+
+      #productos {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 10px;
+      }
+
+      .producto-card {
+        padding: 18px;
+        margin: 0;
+      }
+
+      .producto-img {
+        height: 200px;
+      }
+
+      .producto-nombre {
+        font-size: 1.2em;
+      }
+
+      .producto-precio {
+        font-size: 1.3em;
+      }
+
+      .side-menu {
+        width: 100%;
+        left: -100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Modal para agregar testimonio -->
+  <div class="testimonial-modal" id="testimonialModal">
+    <div class="testimonial-modal-content">
+      <h3 class="testimonial-modal-title">Deja tu Reseña</h3>
+      <div id="testimonialForm">
+        <!-- Formulario se carga dinámicamente aquí -->
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-toggle" id="menuToggle">
+    <div class="menu-toggle-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <nav class="side-menu" id="sideMenu">
+    <div class="menu-header">
+      <div class="menu-logo">VapeDealer MX</div>
+      <div class="menu-tagline">Tu tienda de confianza 💨</div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Navegación</div>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">🏠</span>
+        <span class="menu-item-text">Inicio</span>
+      </a>
+      <a href="#productos-section" class="menu-item">
+        <span class="menu-item-icon">🛍️</span>
+        <span class="menu-item-text">Catálogo</span>
+      </a>
+      <a href="pedidos.html" class="menu-item">
+        <span class="menu-item-icon">🛒</span>
+        <span class="menu-item-text">Mi Carrito</span>
+        <span class="menu-badge" id="menu-cart-count">0</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">⭐</span>
+        <span class="menu-item-text">Ofertas Especiales</span>
+        <span class="menu-badge">NEW</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Categorías</div>
+      <a href="#" class="menu-item filter-category" data-filter="Premium">
+        <span class="menu-item-icon">🍯</span>
+        <span class="menu-item-text">Premium</span>
+      </a>
+      <a href="#" class="menu-item filter-category" data-filter="Nuevos">
+        <span class="menu-item-icon">⚡</span>
+        <span class="menu-item-text">Nuevos</span>
+      </a>
+      <a href="#" class="menu-item filter-category" data-filter="Ofertas">
+        <span class="menu-item-icon">💰</span>
+        <span class="menu-item-text">Ofertas</span>
+      </a>
+      <a href="#" class="menu-item filter-category" data-filter="Populares">
+        <span class="menu-item-icon">🌟</span>
+        <span class="menu-item-text">Populares</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Cuenta</div>
+      <a href="perfil.html" class="menu-item">
+        <span class="menu-item-icon">👤</span>
+        <span class="menu-item-text">Mi Perfil</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">❤️</span>
+        <span class="menu-item-text">Favoritos</span>
+      </a>
+      <a href="configuracion.html" class="menu-item">
+        <span class="menu-item-icon">⚙️</span>
+        <span class="menu-item-text">Configuración</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Ayuda</div>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">💬</span>
+        <span class="menu-item-text">Contacto</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">❓</span>
+        <span class="menu-item-text">FAQ</span>
+      </a>
+      <a href="https://wa.me/523346799345" target="_blank" class="menu-item">
+        <span class="menu-item-icon">📱</span>
+        <span class="menu-item-text">WhatsApp</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Botón de Carrito Flotante -->
+  <div class="cart-button" id="cartButton">
+    <div class="cart-button-icon">
+      🛒
+      <span class="cart-count" id="cartCount">0</span>
+    </div>
+  </div>
+
+  <header>
+    <h1>VapeDealer MX</h1>
+    <p>No vendemos humo. Vendemos estilo 💨</p>
+  </header>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h2 class="hero-title">La mejor selección de productos</h2>
+      <p class="hero-subtitle">
+        Descubre nuestra amplia gama de productos premium con la mejor calidad 
+        y precios competitivos. Entrega rápida en toda la república.
+      </p>
+      <a href="#productos-section" class="hero-cta">Ver Catálogo</a>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Productos Disponibles</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Clientes Satisfechos</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Atención al Cliente</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">48h</div>
+        <div class="stat-label">Envío Express</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories-section">
+    <h2 class="section-title">Nuestras Categorías</h2>
+    <p class="section-subtitle">
+      Elige, Encarga y Disfruta mas facil no puede ser 
+    </p>
+    
+    <div class="categories-grid">
+      <div class="category-card" data-filter="Premium">
+        <span class="category-icon">🍯🔥</span>
+        <h3 class="category-title">Premium</h3>
+        <p class="category-description">
+          Los mejores productos de la más alta calidad para los más exigentes ¡Mieles!
+        </p>
+      </div>
+      <div class="category-card" data-filter="Nuevos">
+        <span class="category-icon">⚡</span>
+        <h3 class="category-title">Nuevos</h3>
+        <p class="category-description">
+          Las últimas novedades y lanzamientos del mercado
+        </p>
+      </div>
+      <div class="category-card" data-filter="Ofertas">
+        <span class="category-icon">💰</span>
+        <h3 class="category-title">Ofertas</h3>
+        <p class="category-description">
+          Los mejores precios y promociones especiales
+        </p>
+      </div>
+      <div class="category-card" data-filter="Populares">
+        <span class="category-icon">🌟</span>
+        <h3 class="category-title">Populares</h3>
+        <p class="category-description">
+          Productos más vendidos y mejor valorados
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <div class="section-title">Productos Destacados</div>
+    <p class="section-subtitle">
+     Productos más populares
+    </p>
+  </section>
+
+  <section class="catalog-section" id="productos-section">
+    <div class="catalog-header">
+      <h2 class="section-title">Catálogo Completo</h2>
+      <p class="section-subtitle">
+        Todos nuestros Vapos
+      </p>
+      
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="Todos">Todos</button>
+        <button class="filter-btn" data-filter="Premium">Premium</button>
+        <button class="filter-btn" data-filter="Nuevos">Nuevos</button>
+        <button class="filter-btn" data-filter="Ofertas">Ofertas</button>
+        <button class="filter-btn" data-filter="Populares">Populares</button>
+      </div>
+    </div>
+
+    <div id="productos">
+      <div class="loading-message">Cargando productos...</div>
+    </div>
+  </section>
+
+  <section class="why-us-section">
+    <h2 class="section-title">¿Por qué VapeDealer MX?</h2>
+    <p class="section-subtitle">
+      Somos el contacto que necesitabas para tu vicio.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🚚</div>
+        <h3 class="feature-title">Envío Rápido</h3>
+        <p class="feature-description">
+          Entregas en todo cihuatlan y alrededores pregunta por tu ubicación.
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✅</div>
+        <h3 class="feature-title">Garantía Total</h3>
+        <p class="feature-description">
+          100% de garantía en todos nuestros productos originales
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💬</div>
+        <h3 class="feature-title">Atención 24/7</h3>
+        <p class="feature-description">
+          Venta directa via WhatsApp 24/7.
+        </p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Compra Segura</h3>
+        <p class="feature-description">
+          Paga al recibir tu equipo en efectivo, transferencia o canje la opcion que mejor se adapte a ti 🤪🔥
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section">
+    <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+    <p class="section-subtitle">
+      Miles de clientes satisfechos avalan nuestra calidad
+    </p>
+
+    <button class="add-testimonial-btn" onclick="mostrarModalTestimonio()">
+      <span>⭐</span> Dejar una reseña
+    </button>
+
+    <div class="testimonials-grid" id="testimonials">
+      <div class="loading-message">Cargando testimonios...</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>VapeDealer MX</h3>
+        <p>Tu lugar con los mejores Vapos y mieles 🤫 el mejor servicio al cliente.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p>📞 WhatsApp: +52 33 467 993 45</p>
+        <p>⏰ Horario: 24/7</p>
+        <p>🚚 Envíos a todo cihuatlan, melaque y alrededores </p>
+      </div>
+      <div class="footer-section">
+        <h3>Información</h3>
+        <a href="#">Términos y Condiciones</a><br>
+        <a href="#">Política de Privacidad</a><br>
+        <a href="#">Preguntas Frecuentes</a><br>
+        <a href="#">Garantías</a>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <a href="#">Facebook</a><br>
+        <a href="#">Instagram</a><br>
+        <a href="#">TikTok</a><br>
+        <a href="#">WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 VapeDealer MX. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
+  <div id="admin-access" title="Haz click 5 veces para entrar como admin"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Configuración de Supabase
+const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+const productosContainer = document.getElementById('productos');
+const testimonialsContainer = document.getElementById('testimonials');
+const cartButton = document.getElementById('cartButton');
+const cartCount = document.getElementById('cartCount');
+const menuCartCount = document.getElementById('menu-cart-count');
+const testimonialModal = document.getElementById('testimonialModal');
+
+let usuarioActual = null;
+let ratingSeleccionado = 0;
+
+// Sistema de Carrito
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+function actualizarContadorCarrito() {
+  console.log('🔄 Actualizando contador del carrito...');
+  const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+  cartCount.textContent = totalItems;
+  menuCartCount.textContent = totalItems;
+  
+  if (totalItems > 0) {
+    cartCount.style.display = 'block';
+    menuCartCount.style.display = 'inline-block';
+    console.log(`✅ Carrito actualizado: ${totalItems} items`);
+  } else {
+    cartCount.style.display = 'none';
+    menuCartCount.style.display = 'none';
+    console.log('🛒 Carrito vacío');
+  }
+}
+
+function agregarAlCarrito(producto) {
+  console.log('🛒 Intentando agregar producto al carrito:', producto);
+  
+  // CORRECCIÓN: Usar id_producto si id no está disponible
+  const productoId = producto.id || producto.id_producto;
+  
+  if (!producto || !productoId) {
+    console.error('❌ Producto inválido:', producto);
+    console.error('❌ Campos disponibles:', Object.keys(producto));
+    mostrarToast('❌ Error al agregar el producto');
+    return;
+  }
+  
+  console.log(`✅ Producto válido - ID: ${productoId}, Nombre: ${producto.nombre}`);
+  
+  const itemExistente = carrito.find(item => item.id === productoId);
+  
+  if (itemExistente) {
+    itemExistente.cantidad++;
+    console.log(`➕ Incrementando cantidad del producto existente: ${producto.nombre}`);
+  } else {
+    carrito.push({
+      id: productoId,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      imagen_url: producto.imagen_url,
+      cantidad: 1
+    });
+    console.log(`🆕 Nuevo producto agregado: ${producto.nombre}`);
+  }
+  
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+  actualizarContadorCarrito();
+  mostrarToast(`✅ ${producto.nombre} agregado al carrito`);
+  console.log('💾 Carrito guardado en localStorage');
+}
+
+function mostrarToast(mensaje) {
+  console.log('📢 Mostrando toast:', mensaje);
+  const toastsExistentes = document.querySelectorAll('.success-toast');
+  toastsExistentes.forEach(toast => toast.remove());
+  
+  const toast = document.createElement('div');
+  toast.className = 'success-toast';
+  toast.textContent = mensaje;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.remove();
+      console.log('🗑️ Toast eliminado');
+    }
+  }, 3000);
+}
+
+// Cargar productos desde Supabase
+async function cargarProductos(filtro = 'Todos') {
+  console.log(`📦 Cargando productos con filtro: ${filtro}`);
+  
+  try {
+    productosContainer.innerHTML = '<div class="loading-message">Cargando productos...</div>';
+
+    let query = supabase.from('productos').select('*');
+    
+    if (filtro !== 'Todos') {
+      query = query.eq('categoria', filtro);
+    }
+    
+    const { data: productos, error } = await query.order('nombre');
+
+    if (error) {
+      console.error('❌ Error en consulta de productos:', error);
+      throw error;
+    }
+
+    console.log(`✅ Productos cargados: ${productos ? productos.length : 0} productos`);
+    
+    if (productos && productos.length > 0) {
+      console.log('🔍 Estructura del primer producto:', productos[0]);
+      console.log('🔍 Campos disponibles:', Object.keys(productos[0]));
+    }
+
+    productosContainer.innerHTML = '';
+
+    if (!productos || productos.length === 0) {
+      console.log('ℹ️ No se encontraron productos en esta categoría');
+      productosContainer.innerHTML = '<div class="error-message">No se encontraron productos en esta categoría</div>';
+      return;
+    }
+
+    productos.forEach((producto, index) => {
+      console.log(`🎨 Creando tarjeta para producto ${index + 1}:`, producto.nombre);
+      
+      const productoCard = document.createElement('div');
+      productoCard.className = 'producto-card';
+      
+      const img = document.createElement('img');
+      img.className = 'producto-img';
+      img.alt = producto.nombre;
+      
+      if (producto.imagen_url) {
+        console.log(`🖼️ Cargando imagen para ${producto.nombre}: ${producto.imagen_url}`);
+        img.src = producto.imagen_url;
+        img.onerror = function() {
+          console.error(`❌ Error al cargar imagen de ${producto.nombre}`);
+          this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23222"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" fill="%23666" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
+        };
+        img.onload = function() {
+          console.log(`✅ Imagen cargada correctamente: ${producto.nombre}`);
+        };
+      } else {
+        console.log(`⚠️ Sin imagen para ${producto.nombre}, usando placeholder`);
+        img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23222"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" fill="%23666" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
+      }
+      
+      const contenido = document.createElement('div');
+      const precioFormateado = typeof producto.precio === 'number' 
+        ? `$${producto.precio.toFixed(2)} MXN` 
+        : `$${producto.precio || '0.00'} MXN`;
+        
+      contenido.innerHTML = `
+        <h3 class="producto-nombre">${producto.nombre || 'Producto sin nombre'}</h3>
+        <div class="producto-precio">${precioFormateado}</div>
+        <p class="producto-descripcion">${producto.descripcion || 'Sin descripción disponible'}</p>
+      `;
+      
+      const acciones = document.createElement('div');
+      acciones.className = 'producto-actions';
+      
+      const btnAgregar = document.createElement('button');
+      btnAgregar.className = 'btn-agregar-carrito';
+      btnAgregar.textContent = 'Agregar al Carrito';
+      btnAgregar.onclick = () => {
+        console.log(`🖱️ Click en agregar carrito: ${producto.nombre}`);
+        agregarAlCarrito(producto);
+      };
+      
+      const btnWhatsapp = document.createElement('button');
+      btnWhatsapp.className = 'btn-whatsapp';
+      btnWhatsapp.innerHTML = '💬';
+      btnWhatsapp.title = 'Comprar por WhatsApp';
+      btnWhatsapp.onclick = () => {
+        console.log(`🖱️ Click en WhatsApp: ${producto.nombre}`);
+        comprarPorWhatsApp(producto.nombre, producto.precio);
+      };
+      
+      acciones.appendChild(btnAgregar);
+      acciones.appendChild(btnWhatsapp);
+      
+      productoCard.appendChild(img);
+      productoCard.appendChild(contenido);
+      productoCard.appendChild(acciones);
+      productosContainer.appendChild(productoCard);
+    });
+
+    console.log('✅ Todos los productos renderizados correctamente');
+
+  } catch (error) {
+    console.error('❌ Error crítico al cargar productos:', error);
+    console.error('🔧 Detalles del error:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
+    
+    productosContainer.innerHTML = `
+      <div class="error-message">
+        Error al cargar los productos: ${error.message}
+        <br><br>
+        <button onclick="cargarProductos()" style="background:#25D366;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;">
+          Reintentar
+        </button>
+      </div>
+    `;
+  }
+}
+
+// Cargar testimonios desde Supabase
+async function cargarTestimonios() {
+  console.log('💬 Cargando testimonios...');
+  
+  try {
+    const { data: testimonios, error } = await supabase
+      .from('testimonios')
+      .select(`
+        comentario,
+        calificacion,
+        created_at,
+        usuarios (nombre, foto_url)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    if (error) {
+      console.error('❌ Error en consulta de testimonios:', error);
+      throw error;
+    }
+
+    console.log(`✅ Testimonios cargados: ${testimonios ? testimonios.length : 0} testimonios`);
+
+    testimonialsContainer.innerHTML = '';
+
+    if (!testimonios || testimonios.length === 0) {
+      console.log('ℹ️ No hay testimonios, mostrando placeholders');
+      testimonialsContainer.innerHTML = `
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Excelente calidad y entrega súper rápida. Definitivamente mi tienda de confianza."</p>
+          <div class="testimonial-author">Carlos M.</div>
+          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-text">"Los mejores precios y atención personalizada. Siempre encuentro lo que busco."</p>
+          <div class="testimonial-author">Ana R.</div>
+          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+        </div>
+      `;
+      return;
+    }
+
+    testimonios.forEach((testimonio, index) => {
+      console.log(`🎨 Creando testimonio ${index + 1}:`, testimonio.usuarios?.nombre);
+      
+      const testimonialCard = document.createElement('div');
+      testimonialCard.className = 'testimonial-card';
+      
+      const estrellas = '⭐'.repeat(testimonio.calificacion || 5);
+      const nombreUsuario = testimonio.usuarios?.nombre || 'Cliente Satisfecho';
+      const fecha = new Date(testimonio.created_at).toLocaleDateString('es-MX');
+      
+      testimonialCard.innerHTML = `
+        <p class="testimonial-text">"${testimonio.comentario}"</p>
+        <div class="testimonial-author">${nombreUsuario}</div>
+        <div class="testimonial-rating">${estrellas}</div>
+        <div class="testimonial-date">${fecha}</div>
+      `;
+      
+      testimonialsContainer.appendChild(testimonialCard);
+    });
+
+    console.log('✅ Todos los testimonios renderizados correctamente');
+
+  } catch (error) {
+    console.error('❌ Error crítico al cargar testimonios:', error);
+    console.error('🔧 Detalles del error:', error);
+    
+    testimonialsContainer.innerHTML = `
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Excelente calidad y entrega súper rápida. Definitivamente mi tienda de confianza."</p>
+        <div class="testimonial-author">Carlos M.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Los mejores precios y atención personalizada. Siempre encuentro lo que busco."</p>
+        <div class="testimonial-author">Ana R.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Productos originales y garantizados. Muy recomendable."</p>
+        <div class="testimonial-author">Luis G.</div>
+        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+      </div>
+    `;
+  }
+}
+
+// Sistema de testimonios
+async function verificarAutenticacion() {
+  console.log('🔐 Verificando autenticación...');
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error('❌ Error al verificar autenticación:', error);
+    return null;
+  }
+  console.log('✅ Estado de autenticación:', user ? `Usuario: ${user.email}` : 'No autenticado');
+  return user;
+}
+
+async function mostrarModalTestimonio() {
+  console.log('⭐ Abriendo modal de testimonio...');
+  usuarioActual = await verificarAutenticacion();
+  const testimonialForm = document.getElementById('testimonialForm');
+
+  if (!usuarioActual) {
+    console.log('❌ Usuario no autenticado, mostrando mensaje de login');
+    testimonialForm.innerHTML = `
+      <div class="testimonial-login-message">
+        <p>Para dejar una reseña, necesitas iniciar sesión.</p>
+        <button class="testimonial-login-btn" onclick="cerrarModalTestimonio()">
+          Cerrar
+        </button>
+      </div>
+    `;
+    testimonialModal.classList.add('open');
+    return;
+  }
+
+  // Verificar si el usuario ya dejó una reseña hoy
+  const hoy = new Date().toISOString().split('T')[0];
+  console.log(`📅 Verificando reseñas del usuario para hoy: ${hoy}`);
+  
+  const { data: testimonioHoy, error } = await supabase
+    .from('testimonios')
+    .select('id_testimonio')
+    .eq('id_usuario', usuarioActual.id)
+    .gte('created_at', hoy + 'T00:00:00')
+    .lte('created_at', hoy + 'T23:59:59')
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('❌ Error al verificar reseñas del día:', error);
+  }
+
+  if (testimonioHoy) {
+    console.log('⚠️ Usuario ya dejó una reseña hoy');
+    testimonialForm.innerHTML = `
+      <div class="testimonial-login-message">
+        <p>Ya has dejado una reseña hoy. Puedes dejar otra mañana.</p>
+        <button class="testimonial-login-btn" onclick="cerrarModalTestimonio()">
+          Cerrar
+        </button>
+      </div>
+    `;
+    testimonialModal.classList.add('open');
+    return;
+  }
+
+  console.log('✅ Usuario puede dejar reseña, mostrando formulario');
+  ratingSeleccionado = 0;
+  testimonialForm.innerHTML = `
+    <div class="rating-stars" id="ratingStars">
+      <span class="star" data-rating="1">☆</span>
+      <span class="star" data-rating="2">☆</span>
+      <span class="star" data-rating="3">☆</span>
+      <span class="star" data-rating="4">☆</span>
+      <span class="star" data-rating="5">☆</span>
+    </div>
+    <textarea 
+      class="testimonial-textarea" 
+      id="testimonialText" 
+      placeholder="Comparte tu experiencia con VapeDealer MX..."
+      maxlength="500"
+    ></textarea>
+    <div class="char-counter" id="charCounter">0/500 caracteres</div>
+    <div class="testimonial-modal-buttons">
+      <button class="testimonial-btn testimonial-btn-secondary" onclick="cerrarModalTestimonio()">
+        Cancelar
+      </button>
+      <button class="testimonial-btn testimonial-btn-primary" id="submitTestimonial" onclick="enviarTestimonio()" disabled>
+        Enviar Reseña
+      </button>
+    </div>
+  `;
+
+  // Inicializar estrellas
+  const stars = testimonialForm.querySelectorAll('.star');
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const rating = parseInt(star.dataset.rating);
+      ratingSeleccionado = rating;
+      console.log(`⭐ Rating seleccionado: ${rating}`);
+      
+      stars.forEach((s, index) => {
+        if (index < rating) {
+          s.classList.add('active');
+          s.textContent = '⭐';
+        } else {
+          s.classList.remove('active');
+          s.textContent = '☆';
+        }
+      });
+      
+      validarFormularioTestimonio();
+    });
+  });
+
+  // Contador de caracteres
+  const textarea = testimonialForm.querySelector('#testimonialText');
+  const charCounter = testimonialForm.querySelector('#charCounter');
+  
+  textarea.addEventListener('input', () => {
+    const length = textarea.value.length;
+    charCounter.textContent = `${length}/500 caracteres`;
+    
+    if (length > 450) {
+      charCounter.classList.add('warning');
+    } else {
+      charCounter.classList.remove('warning');
+    }
+    
+    if (length >= 500) {
+      charCounter.classList.add('error');
+    } else {
+      charCounter.classList.remove('error');
+    }
+    
+    validarFormularioTestimonio();
+  });
+
+  testimonialModal.classList.add('open');
+  console.log('✅ Modal de testimonio abierto correctamente');
+}
+
+function validarFormularioTestimonio() {
+  const textarea = document.getElementById('testimonialText');
+  const submitBtn = document.getElementById('submitTestimonial');
+  
+  const tieneRating = ratingSeleccionado > 0;
+  const tieneTexto = textarea.value.trim().length >= 10;
+  
+  submitBtn.disabled = !(tieneRating && tieneTexto);
+  
+  console.log(`🔍 Validación formulario - Rating: ${tieneRating}, Texto: ${tieneTexto}, Habilitado: ${!submitBtn.disabled}`);
+}
+
+async function enviarTestimonio() {
+  console.log('📤 Enviando testimonio...');
+  const textarea = document.getElementById('testimonialText');
+  const comentario = textarea.value.trim();
+  const submitBtn = document.getElementById('submitTestimonial');
+
+  if (!usuarioActual || ratingSeleccionado === 0 || comentario.length < 10) {
+    console.error('❌ Validación fallida al enviar testimonio');
+    mostrarToast('❌ Completa todos los campos correctamente');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Enviando...';
+
+  try {
+    console.log('💾 Insertando testimonio en la base de datos...');
+    const { data, error } = await supabase
+      .from('testimonios')
+      .insert({
+        id_usuario: usuarioActual.id,
+        comentario: comentario,
+        calificacion: ratingSeleccionado
+      })
+      .select();
+
+    if (error) {
+      console.error('❌ Error al insertar testimonio:', error);
+      throw error;
+    }
+
+    console.log('✅ Testimonio insertado correctamente:', data);
+    mostrarToast('✅ ¡Gracias por tu reseña!');
+    cerrarModalTestimonio();
+    cargarTestimonios(); // Recargar testimonios
+
+  } catch (error) {
+    console.error('❌ Error crítico al enviar testimonio:', error);
+    mostrarToast('❌ Error al enviar la reseña');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Enviar Reseña';
+  }
+}
+
+function cerrarModalTestimonio() {
+  console.log('❌ Cerrando modal de testimonio');
+  testimonialModal.classList.remove('open');
+}
+
+function comprarPorWhatsApp(nombreProducto, precioProducto) {
+  console.log(`📱 Abriendo WhatsApp para producto: ${nombreProducto}`);
+  const mensaje = `¡Hola VapeDealer MX! 👋\n\nEstoy interesado en comprar el siguiente producto:\n\n📦 *Producto:* ${nombreProducto}\n💰 *Precio:* $${precioProducto} MXN\n\nPor favor, necesito más información sobre disponibilidad y formas de pago.`;
+  const url = `https://wa.me/523346799345?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
+}
+
+    // Event listener para el botón del carrito
+    cartButton.addEventListener('click', () => {
+      if (carrito.length === 0) {
+        mostrarToast('🛒 Tu carrito está vacío');
+        return;
+      }
+      window.location.href = 'pedidos.html';
+    });
+
+    // Funcionalidad del menú lateral
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    let menuState = { isOpen: false };
+
+    function openMenu() {
+      menuState.isOpen = true;
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('open');
+      menuToggle.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      menuState.isOpen = false;
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      menuToggle.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuToggle.addEventListener('click', () => {
+      if (menuState.isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    menuOverlay.addEventListener('click', closeMenu);
+
+    // Cerrar menú al hacer clic en enlaces internos
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (href && (href.startsWith('#') || !href.startsWith('http'))) {
+          closeMenu();
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menuState.isOpen) {
+        closeMenu();
+      }
+    });
+
+    // Filtros de productos
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        const filtro = button.getAttribute('data-filter');
+        cargarProductos(filtro);
+      });
+    });
+
+    // Filtros desde tarjetas de categorías
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const filtro = card.getAttribute('data-filter');
+        const botonFiltro = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
+        if (botonFiltro) {
+          botonFiltro.click();
+        }
+        document.querySelector('#productos-section').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Filtros desde el menú lateral
+    const filterCategories = document.querySelectorAll('.filter-category');
+    filterCategories.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const filtro = item.getAttribute('data-filter');
+        const botonFiltro = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
+        if (botonFiltro) {
+          botonFiltro.click();
+        }
+        document.querySelector('#productos-section').scrollIntoView({ behavior: 'smooth' });
+        closeMenu();
+      });
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Acceso admin (5 clicks en el área oculta)
+    let adminClicks = 0;
+    let adminTimeout;
+    document.getElementById('admin-access').addEventListener('click', () => {
+      adminClicks++;
+      clearTimeout(adminTimeout);
+      
+      if (adminClicks >= 5) {
+        window.location.href = 'login.html';
+      }
+      
+      adminTimeout = setTimeout(() => {
+        adminClicks = 0;
+      }, 2000);
+    });
+
+    // Cerrar modal al hacer clic fuera
+    testimonialModal.addEventListener('click', (e) => {
+      if (e.target === testimonialModal) {
+        cerrarModalTestimonio();
+      }
+    });
+
+    // Inicializar cuando la página esté completamente cargada
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Inicializando VapeDealer MX...');
+      cargarProductos();
+      cargarTestimonios();
+      actualizarContadorCarrito();
+    });
+
+    // Manejar errores no capturados
+    window.addEventListener('error', (e) => {
+      console.error('Error no capturado:', e.error);
+    });
+  </script>
+</body>
+</html>

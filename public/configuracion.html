@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuración - VapeDealer MX</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: white;
+      line-height: 1.6;
+    }
+
+    /* Menú Lateral */
+    .side-menu {
+      position: fixed;
+      left: -300px;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+      z-index: 2000;
+      transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      overflow-y: auto;
+      border-right: 2px solid #333;
+    }
+
+    .side-menu.open {
+      left: 0;
+    }
+
+    .menu-header {
+      padding: 25px 20px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      border-bottom: 2px solid #1a8f47;
+    }
+
+    .menu-logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .menu-tagline {
+      font-size: 0.9em;
+      color: rgba(255,255,255,0.9);
+      font-style: italic;
+    }
+
+    .menu-section {
+      padding: 20px;
+      border-bottom: 1px solid #333;
+    }
+
+    .menu-section-title {
+      font-size: 0.85em;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #ccc;
+      border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: rgba(37, 211, 102, 0.1);
+      border-color: #25D366;
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .menu-item-icon {
+      font-size: 1.3em;
+      margin-right: 15px;
+      min-width: 25px;
+      text-align: center;
+    }
+
+    .menu-item-text {
+      flex: 1;
+      font-size: 0.95em;
+    }
+
+    .menu-toggle {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #25D366, #20b358);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2001;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    .menu-toggle-icon {
+      width: 24px;
+      height: 18px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-toggle-icon span {
+      width: 100%;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.open .menu-toggle-icon span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .menu-badge {
+      background: #ff4444;
+      color: white;
+      font-size: 0.7em;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 20px 10px 20px 70px;
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      border-bottom: 2px solid #333;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      font-style: italic;
+      color: #ccc;
+      font-size: 1.1em;
+    }
+
+    /* Contenedor Principal */
+    .settings-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    /* Navegación de Pestañas */
+    .tabs-navigation {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      border: 1px solid #333;
+    }
+
+    .tab-button {
+      padding: 15px 25px;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      font-size: 1em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tab-button:hover {
+      background: rgba(37, 211, 102, 0.1);
+      color: white;
+    }
+
+    .tab-button.active {
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    /* Contenido de Pestañas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-card {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid #333;
+      margin-bottom: 30px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #333;
+    }
+
+    .section-title {
+      font-size: 1.6em;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-icon {
+      font-size: 1.2em;
+    }
+
+    .section-description {
+      color: #888;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    /* Configuración de Items */
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .setting-item:hover {
+      border-color: #25D366;
+      transform: translateX(5px);
+    }
+
+    .setting-info {
+      flex: 1;
+    }
+
+    .setting-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .setting-description {
+      color: #888;
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: #333;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.active {
+      background: #25D366;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch.active::after {
+      left: 33px;
+    }
+
+    /* Select personalizado */
+    .custom-select {
+      position: relative;
+      width: 200px;
+    }
+
+    .custom-select select {
+      width: 100%;
+      padding: 10px 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 0.95em;
+      appearance: none;
+      transition: all 0.3s ease;
+    }
+
+    .custom-select select:hover {
+      border-color: #25D366;
+    }
+
+    .custom-select select:focus {
+      outline: none;
+      border-color: #25D366;
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    }
+
+    .custom-select::after {
+      content: '▼';
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #25D366;
+      pointer-events: none;
+    }
+
+    /* Botones */
+    .btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.95em;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #25D366, #20b358);
+      color: white;
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-secondary {
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #333;
+    }
+
+    .btn-secondary:hover {
+      background: #333;
+      border-color: #25D366;
+    }
+
+    .btn-danger {
+      background: #ff4444;
+      color: white;
+      box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 68, 68, 0.4);
+    }
+
+    /* Slider de Rango */
+    .range-slider {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .range-slider input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .range-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #25D366;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(37, 211, 102, 0.5);
+    }
+
+    .range-slider input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #25D366;
+      cursor: pointer;
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 2px 10px rgba(37, 211, 102, 0.5);
+    }
+
+    .range-value {
+      color: #25D366;
+      font-weight: bold;
+      margin-left: 15px;
+      font-size: 1.1em;
+    }
+
+    /* Color Picker */
+    .color-picker-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .color-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid transparent;
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .color-option.active {
+      border-color: white;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    /* Grid de Opciones */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .option-card {
+      background: #1a1a1a;
+      border: 2px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-card:hover {
+      border-color: #25D366;
+      transform: translateY(-5px);
+    }
+
+    .option-card.active {
+      border-color: #25D366;
+      background: rgba(37, 211, 102, 0.1);
+    }
+
+    .option-icon {
+      font-size: 3em;
+      margin-bottom: 15px;
+    }
+
+    .option-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .option-description {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    /* Stats y Gráficos */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: #25D366;
+    }
+
+    .stat-icon {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+    }
+
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #25D366;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    /* Notificaciones */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      z-index: 3000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: linear-gradient(45deg, #25D366, #20b358);
+    }
+
+    .notification.error {
+      background: linear-gradient(45deg, #ff4444, #cc0000);
+    }
+
+    .notification.warning {
+      background: linear-gradient(45deg, #FFC107, #FF9800);
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+      padding: 60px 20px 30px;
+      border-top: 2px solid #333;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .footer-section h3 {
+      color: #25D366;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      line-height: 1.8;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #25D366;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid #333;
+      color: #666;
+    }
+
+    a.whatsapp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #25D366, #20b358);
+      padding: 15px 20px;
+      border-radius: 50px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    a.whatsapp:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2em;
+      }
+
+      .tabs-navigation {
+        flex-direction: column;
+      }
+
+      .tab-button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .setting-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .custom-select {
+        width: 100%;
+      }
+
+      .range-slider {
+        max-width: 100%;
+      }
+
+      .side-menu {
+        width: 280px;
+        left: -280px;
+      }
+
+      .menu-toggle {
+        width: 45px;
+        height: 45px;
+        left: 15px;
+        top: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .settings-container {
+        padding: 15px;
+        margin: 20px auto;
+      }
+
+      .side-menu {
+        width: 100%;
+        left: -100%;
+      }
+
+      .section-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Notificaciones -->
+  <div class="notification" id="notification"></div>
+
+  <!-- Botón para abrir/cerrar menú -->
+  <div class="menu-toggle" id="menuToggle">
+    <div class="menu-toggle-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Overlay oscuro -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- Menú Lateral -->
+  <nav class="side-menu" id="sideMenu">
+    <div class="menu-header">
+      <div class="menu-logo">VapeDealer MX</div>
+      <div class="menu-tagline">Tu tienda de confianza 💨</div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Navegación</div>
+      <a href="index.html" class="menu-item">
+        <span class="menu-item-icon">🏠</span>
+        <span class="menu-item-text">Inicio</span>
+      </a>
+      <a href="index.html#productos-section" class="menu-item">
+        <span class="menu-item-icon">🛍️</span>
+        <span class="menu-item-text">Catálogo</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">⭐</span>
+        <span class="menu-item-text">Ofertas Especiales</span>
+        <span class="menu-badge">NEW</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">📦</span>
+        <span class="menu-item-text">Mis Pedidos</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Categorías</div>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">🍯</span>
+        <span class="menu-item-text">Premium</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">⚡</span>
+        <span class="menu-item-text">Nuevos</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">💰</span>
+        <span class="menu-item-text">Ofertas</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">🌟</span>
+        <span class="menu-item-text">Populares</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Cuenta</div>
+      <a href="MiPerfil.html" class="menu-item">
+        <span class="menu-item-icon">👤</span>
+        <span class="menu-item-text">Mi Perfil</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">❤️</span>
+        <span class="menu-item-text">Favoritos</span>
+      </a>
+      <a href="Configuracion.html" class="menu-item">
+        <span class="menu-item-icon">⚙️</span>
+        <span class="menu-item-text">Configuración</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Ayuda</div>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">💬</span>
+        <span class="menu-item-text">Contacto</span>
+      </a>
+      <a href="#" class="menu-item">
+        <span class="menu-item-icon">❓</span>
+        <span class="menu-item-text">FAQ</span>
+      </a>
+      <a href="https://wa.me/523346799345" target="_blank" class="menu-item">
+        <span class="menu-item-icon">📱</span>
+        <span class="menu-item-text">WhatsApp</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header>
+    <h1>VapeDealer MX</h1>
+    <p>Configuración</p>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <div class="settings-container">
+    <!-- Navegación de Pestañas -->
+    <div class="tabs-navigation">
+      <button class="tab-button active" onclick="switchTab('general')">
+        <span>⚙️</span> General
+      </button>
+      <button class="tab-button" onclick="switchTab('notifications')">
+        <span>🔔</span> Notificaciones
+      </button>
+      <button class="tab-button" onclick="switchTab('privacy')">
+        <span>🔒</span> Privacidad
+      </button>
+      <button class="tab-button" onclick="switchTab('appearance')">
+        <span>🎨</span> Apariencia
+      </button>
+      <button class="tab-button" onclick="switchTab('language')">
+        <span>🌐</span> Idioma y Región
+      </button>
+      <button class="tab-button" onclick="switchTab('advanced')">
+        <span>🔧</span> Avanzado
+      </button>
+    </div>
+
+    <!-- Tab: General -->
+    <div id="general" class="tab-content active">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">⚙️</span>
+            Configuración General
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigGeneral()">Guardar Cambios</button>
+        </div>
+        
+        <p class="section-description">
+          Configura las opciones básicas de tu cuenta y experiencia de compra.
+        </p>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Recordar sesión</div>
+            <div class="setting-description">Mantén la sesión iniciada en este dispositivo</div>
+          </div>
+          <div class="toggle-switch" id="rememberSession" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Autocompletar información</div>
+            <div class="setting-description">Completa automáticamente formularios con tu información guardada</div>
+          </div>
+          <div class="toggle-switch" id="autoComplete" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Guardar historial de búsqueda</div>
+            <div class="setting-description">Guarda tus búsquedas para mejorar recomendaciones</div>
+          </div>
+          <div class="toggle-switch" id="saveSearchHistory" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Moneda predeterminada</div>
+            <div class="setting-description">Selecciona la moneda para mostrar precios</div>
+          </div>
+          <div class="custom-select">
+            <select id="defaultCurrency">
+              <option value="MXN">MXN - Peso Mexicano</option>
+              <option value="USD">USD - Dólar Americano</option>
+              <option value="EUR">EUR - Euro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Productos por página</div>
+            <div class="setting-description">Número de productos mostrados en el catálogo</div>
+          </div>
+          <div class="custom-select">
+            <select id="productsPerPage">
+              <option value="12">12 productos</option>
+              <option value="24">24 productos</option>
+              <option value="36">36 productos</option>
+              <option value="48">48 productos</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Notificaciones -->
+    <div id="notifications" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🔔</span>
+            Notificaciones
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigNotificaciones()">Guardar Cambios</button>
+        </div>
+
+        <p class="section-description">
+          Controla cómo y cuándo recibes notificaciones sobre tus pedidos y ofertas.
+        </p>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Notificaciones por Email</div>
+            <div class="setting-description">Recibe actualizaciones de pedidos por correo electrónico</div>
+          </div>
+          <div class="toggle-switch" id="emailNotifications" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Notificaciones WhatsApp</div>
+            <div class="setting-description">Alertas de envío y estado de pedidos vía WhatsApp</div>
+          </div>
+          <div class="toggle-switch" id="whatsappNotifications" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">SMS de confirmación</div>
+            <div class="setting-description">Mensajes de texto con confirmación de pedidos</div>
+          </div>
+          <div class="toggle-switch" id="smsNotifications" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Ofertas y promociones</div>
+            <div class="setting-description">Recibe notificaciones de nuevas ofertas y descuentos</div>
+          </div>
+          <div class="toggle-switch" id="promoNotifications" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Nuevos productos</div>
+            <div class="setting-description">Alertas cuando lleguen nuevos productos al catálogo</div>
+          </div>
+          <div class="toggle-switch" id="newProductsNotifications" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Frecuencia de notificaciones</div>
+            <div class="setting-description">Con qué frecuencia deseas recibir notificaciones</div>
+          </div>
+          <div class="custom-select">
+            <select id="notificationFrequency">
+              <option value="realtime">Tiempo Real</option>
+              <option value="daily">Diario (resumen)</option>
+              <option value="weekly">Semanal (resumen)</option>
+              <option value="urgent">Solo urgentes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Privacidad -->
+    <div id="privacy" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🔒</span>
+            Privacidad y Seguridad
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigPrivacidad()">Guardar Cambios</button>
+        </div>
+
+        <p class="section-description">
+          Protege tu información personal y controla quién puede ver tu actividad.
+        </p>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Perfil público</div>
+            <div class="setting-description">Permite que otros usuarios vean tu perfil y reseñas</div>
+          </div>
+          <div class="toggle-switch" id="publicProfile" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Mostrar historial de compras</div>
+            <div class="setting-description">Visible solo para ti, ayuda con recomendaciones</div>
+          </div>
+          <div class="toggle-switch" id="showPurchaseHistory" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Compartir datos de navegación</div>
+            <div class="setting-description">Ayuda a mejorar tu experiencia con recomendaciones personalizadas</div>
+          </div>
+          <div class="toggle-switch" id="shareBrowsingData" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Autenticación de dos factores</div>
+            <div class="setting-description">Seguridad extra al iniciar sesión con código por SMS</div>
+          </div>
+          <div class="toggle-switch" id="twoFactorAuth" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Borrar historial de navegación</div>
+            <div class="setting-description">Elimina tu historial de búsqueda y productos vistos</div>
+          </div>
+          <button class="btn btn-secondary" onclick="borrarHistorialNavegacion()">Borrar Ahora</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Descargar mis datos</div>
+            <div class="setting-description">Descarga toda tu información personal y de pedidos</div>
+          </div>
+          <button class="btn btn-secondary" onclick="descargarMisDatos()">Descargar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Apariencia -->
+    <div id="appearance" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🎨</span>
+            Personalización de Apariencia
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigApariencia()">Guardar Cambios</button>
+        </div>
+
+        <p class="section-description">
+          Personaliza la apariencia de VapeDealer MX según tus preferencias.
+        </p>
+
+        <div class="section-card" style="background: #1a1a1a; margin-bottom: 30px;">
+          <h3 style="color: white; margin-bottom: 20px;">Tema de Color</h3>
+          <div class="options-grid">
+            <div class="option-card" data-theme="dark" onclick="selectTheme(this)">
+              <div class="option-icon">🌙</div>
+              <div class="option-title">Oscuro</div>
+              <div class="option-description">Tema oscuro (actual)</div>
+            </div>
+            <div class="option-card" data-theme="light" onclick="selectTheme(this)">
+              <div class="option-icon">☀️</div>
+              <div class="option-title">Claro</div>
+              <div class="option-description">Tema luminoso</div>
+            </div>
+            <div class="option-card" data-theme="auto" onclick="selectTheme(this)">
+              <div class="option-icon">🌓</div>
+              <div class="option-title">Automático</div>
+              <div class="option-description">Según sistema</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Color de acento</div>
+            <div class="setting-description">Selecciona el color principal de la interfaz</div>
+          </div>
+          <div class="color-picker-group">
+            <div class="color-option" data-color="#25D366" style="background: #25D366;" onclick="selectColor(this)"></div>
+            <div class="color-option" data-color="#2196F3" style="background: #2196F3;" onclick="selectColor(this)"></div>
+            <div class="color-option" data-color="#FF4444" style="background: #FF4444;" onclick="selectColor(this)"></div>
+            <div class="color-option" data-color="#FFC107" style="background: #FFC107;" onclick="selectColor(this)"></div>
+            <div class="color-option" data-color="#9C27B0" style="background: #9C27B0;" onclick="selectColor(this)"></div>
+            <div class="color-option" data-color="#FF6B6B" style="background: #FF6B6B;" onclick="selectColor(this)"></div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Tamaño de fuente</div>
+            <div class="setting-description">Ajusta el tamaño del texto en la interfaz</div>
+          </div>
+          <div class="range-slider">
+            <input type="range" min="80" max="120" value="100" id="fontSizeSlider" oninput="updateFontSize(this)">
+            <span class="range-value" id="fontSizeValue">100%</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Animaciones</div>
+            <div class="setting-description">Efectos visuales y transiciones animadas</div>
+          </div>
+          <div class="toggle-switch" id="animations" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Mostrar precios con IVA</div>
+            <div class="setting-description">Incluye impuestos en el precio mostrado</div>
+          </div>
+          <div class="toggle-switch" id="showPricesWithTax" onclick="toggleSwitch(this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Idioma y Región -->
+    <div id="language" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🌐</span>
+            Idioma y Región
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigIdioma()">Guardar Cambios</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Idioma de la interfaz</div>
+            <div class="setting-description">Selecciona el idioma para el sitio web</div>
+          </div>
+          <div class="custom-select">
+            <select id="interfaceLanguage">
+              <option value="es-MX">🇲🇽 Español (México)</option>
+              <option value="en-US">🇺🇸 English (US)</option>
+              <option value="es-ES">🇪🇸 Español (España)</option>
+              <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Zona horaria</div>
+            <div class="setting-description">Zona horaria para mostrar fechas y horas</div>
+          </div>
+          <div class="custom-select">
+            <select id="timezone">
+              <option value="America/Mexico_City">GMT-6 (Ciudad de México)</option>
+              <option value="America/New_York">GMT-5 (Nueva York)</option>
+              <option value="America/Los_Angeles">GMT-7 (Los Ángeles)</option>
+              <option value="Europe/Madrid">GMT+1 (Madrid)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Formato de fecha</div>
+            <div class="setting-description">Cómo se muestran las fechas</div>
+          </div>
+          <div class="custom-select">
+            <select id="dateFormat">
+              <option value="DD/MM/YYYY">DD/MM/AAAA (16/10/2025)</option>
+              <option value="MM/DD/YYYY">MM/DD/AAAA (10/16/2025)</option>
+              <option value="YYYY-MM-DD">AAAA-MM-DD (2025-10-16)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Formato de hora</div>
+            <div class="setting-description">Sistema de 12 o 24 horas</div>
+          </div>
+          <div class="custom-select">
+            <select id="timeFormat">
+              <option value="12h">12 horas (2:30 PM)</option>
+              <option value="24h">24 horas (14:30)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Avanzado -->
+    <div id="advanced" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🔧</span>
+            Configuración Avanzada
+          </h2>
+          <button class="btn btn-primary" onclick="guardarConfigAvanzada()">Guardar Cambios</button>
+        </div>
+
+        <p class="section-description">
+          Opciones avanzadas para usuarios experimentados. Modifica con precaución.
+        </p>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Modo desarrollador</div>
+            <div class="setting-description">Muestra información técnica y de depuración</div>
+          </div>
+          <div class="toggle-switch" id="developerMode" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Pre-carga de imágenes</div>
+            <div class="setting-description">Carga imágenes antes de mostrarlas (usa más datos)</div>
+          </div>
+          <div class="toggle-switch" id="preloadImages" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Compresión de datos</div>
+            <div class="setting-description">Reduce el uso de datos en conexiones lentas</div>
+          </div>
+          <div class="toggle-switch" id="dataCompression" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Caché del navegador</div>
+            <div class="setting-description">Almacena datos localmente para carga más rápida</div>
+          </div>
+          <button class="btn btn-secondary" onclick="limpiarCache()">Limpiar Caché</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">API Rate Limit</div>
+            <div class="setting-description">Límite de peticiones por minuto</div>
+          </div>
+          <div class="range-slider">
+            <input type="range" min="10" max="100" value="60" step="10" id="rateLimitSlider" oninput="updateRateLimit(this)">
+            <span class="range-value" id="rateLimitValue">60/min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exportar/Importar -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">💾</span>
+            Copia de Seguridad
+          </h2>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Exportar configuración</div>
+            <div class="setting-description">Descarga todas tus preferencias en un archivo JSON</div>
+          </div>
+          <button class="btn btn-secondary" onclick="exportarConfiguracion()">Exportar</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Importar configuración</div>
+            <div class="setting-description">Restaura tus preferencias desde un archivo</div>
+          </div>
+          <button class="btn btn-secondary" onclick="importarConfiguracion()">Importar</button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">Restaurar valores predeterminados</div>
+            <div class="setting-description">Restablece toda la configuración a valores iniciales</div>
+          </div>
+          <button class="btn btn-danger" onclick="restaurarValoresPredeterminados()">Restaurar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>VapeDealer MX</h3>
+        <p>Tu lugar con los mejores Vapos y mieles 🤫 el mejor servicio al cliente.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p>📞 WhatsApp: +52 33 467 993 45</p>
+        <p>⏰ Horario: 24/7</p>
+        <p>🚚 Envíos a todo cihuatlan, melaque y alrededores</p>
+      </div>
+      <div class="footer-section">
+        <h3>Información</h3>
+        <a href="#">Términos y Condiciones</a><br>
+        <a href="#">Política de Privacidad</a><br>
+        <a href="#">Preguntas Frecuentes</a><br>
+        <a href="#">Garantías</a>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <a href="#">Facebook</a><br>
+        <a href="#">Instagram</a><br>
+        <a href="#">TikTok</a><br>
+        <a href="#">WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 VapeDealer MX. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Botón WhatsApp -->
+  <a href="https://wa.me/523346799345" target="_blank" class="whatsapp">💬 WhatsApp</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Configuración de Supabase
+    const supabaseUrl = 'https://sjvgfhloimgzdheiqnuj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdmdmaGxvaW1nemRoZWlxbnVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDg0OTIsImV4cCI6MjA3NjU4NDQ5Mn0.ieXM9A9sw4a0uOnzvHQ887xyb8gY_G_OvAsGM8I2tIs';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    let usuarioActual = null;
+    let configuracionActual = {};
+
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', async () => {
+      await verificarAutenticacion();
+      await cargarConfiguracionUsuario();
+      inicializarInterfaz();
+    });
+
+    // Verificar autenticación
+    async function verificarAutenticacion() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error || !user) {
+        mostrarNotificacion('Por favor inicia sesión para acceder a la configuración', 'error');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+        return;
+      }
+      
+      usuarioActual = user;
+    }
+
+    // Cargar configuración del usuario
+    async function cargarConfiguracionUsuario() {
+      try {
+        // Cargar datos del usuario desde la tabla usuarios
+        const { data: usuario, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('id_usuario', usuarioActual.id)
+          .single();
+
+        if (error) throw error;
+
+        if (usuario) {
+          usuarioActual.datos = usuario;
+        }
+
+        // Cargar configuración desde localStorage
+        cargarConfiguracionLocal();
+
+      } catch (error) {
+        console.error('Error al cargar configuración:', error);
+        mostrarNotificacion('Error al cargar la configuración', 'error');
+      }
+    }
+
+    // Cargar configuración desde localStorage
+    function cargarConfiguracionLocal() {
+      // Configuración General
+      const configGeneral = JSON.parse(localStorage.getItem('vapedealer_config_general') || '{}');
+      document.getElementById('rememberSession').classList.toggle('active', configGeneral.rememberSession || false);
+      document.getElementById('autoComplete').classList.toggle('active', configGeneral.autoComplete || true);
+      document.getElementById('saveSearchHistory').classList.toggle('active', configGeneral.saveSearchHistory || true);
+      document.getElementById('defaultCurrency').value = configGeneral.defaultCurrency || 'MXN';
+      document.getElementById('productsPerPage').value = configGeneral.productsPerPage || '36';
+
+      // Notificaciones
+      const configNotificaciones = JSON.parse(localStorage.getItem('vapedealer_config_notifications') || '{}');
+      document.getElementById('emailNotifications').classList.toggle('active', configNotificaciones.email || true);
+      document.getElementById('whatsappNotifications').classList.toggle('active', configNotificaciones.whatsapp || true);
+      document.getElementById('smsNotifications').classList.toggle('active', configNotificaciones.sms || false);
+      document.getElementById('promoNotifications').classList.toggle('active', configNotificaciones.promotions || true);
+      document.getElementById('newProductsNotifications').classList.toggle('active', configNotificaciones.newProducts || true);
+      document.getElementById('notificationFrequency').value = configNotificaciones.frequency || 'realtime';
+
+      // Apariencia
+      const configApariencia = JSON.parse(localStorage.getItem('vapedealer_config_appearance') || '{}');
+      document.querySelector(`[data-theme="${configApariencia.theme || 'dark'}"]`).classList.add('active');
+      document.querySelector(`[data-color="${configApariencia.accentColor || '#25D366'}"]`).classList.add('active');
+      document.getElementById('fontSizeSlider').value = configApariencia.fontSize || 100;
+      document.getElementById('fontSizeValue').textContent = (configApariencia.fontSize || 100) + '%';
+      document.getElementById('animations').classList.toggle('active', configApariencia.animations !== false);
+      document.getElementById('showPricesWithTax').classList.toggle('active', configApariencia.showPricesWithTax !== false);
+
+      // Idioma
+      const configIdioma = JSON.parse(localStorage.getItem('vapedealer_config_language') || '{}');
+      document.getElementById('interfaceLanguage').value = configIdioma.language || 'es-MX';
+      document.getElementById('timezone').value = configIdioma.timezone || 'America/Mexico_City';
+      document.getElementById('dateFormat').value = configIdioma.dateFormat || 'DD/MM/YYYY';
+      document.getElementById('timeFormat').value = configIdioma.timeFormat || '24h';
+
+      // Avanzado
+      const configAvanzada = JSON.parse(localStorage.getItem('vapedealer_config_advanced') || '{}');
+      document.getElementById('developerMode').classList.toggle('active', configAvanzada.developerMode || false);
+      document.getElementById('preloadImages').classList.toggle('active', configAvanzada.preloadImages !== false);
+      document.getElementById('dataCompression').classList.toggle('active', configAvanzada.dataCompression || false);
+      document.getElementById('rateLimitSlider').value = configAvanzada.rateLimit || 60;
+      document.getElementById('rateLimitValue').textContent = (configAvanzada.rateLimit || 60) + '/min';
+    }
+
+    // Funciones de guardado
+    async function guardarConfigGeneral() {
+      const config = {
+        rememberSession: document.getElementById('rememberSession').classList.contains('active'),
+        autoComplete: document.getElementById('autoComplete').classList.contains('active'),
+        saveSearchHistory: document.getElementById('saveSearchHistory').classList.contains('active'),
+        defaultCurrency: document.getElementById('defaultCurrency').value,
+        productsPerPage: document.getElementById('productsPerPage').value
+      };
+
+      localStorage.setItem('vapedealer_config_general', JSON.stringify(config));
+      mostrarNotificacion('Configuración general guardada', 'success');
+    }
+
+    async function guardarConfigNotificaciones() {
+      const config = {
+        email: document.getElementById('emailNotifications').classList.contains('active'),
+        whatsapp: document.getElementById('whatsappNotifications').classList.contains('active'),
+        sms: document.getElementById('smsNotifications').classList.contains('active'),
+        promotions: document.getElementById('promoNotifications').classList.contains('active'),
+        newProducts: document.getElementById('newProductsNotifications').classList.contains('active'),
+        frequency: document.getElementById('notificationFrequency').value
+      };
+
+      localStorage.setItem('vapedealer_config_notifications', JSON.stringify(config));
+      mostrarNotificacion('Configuración de notificaciones guardada', 'success');
+    }
+
+    async function guardarConfigPrivacidad() {
+      // Actualizar datos en Supabase
+      const updates = {
+        publicProfile: document.getElementById('publicProfile').classList.contains('active'),
+        showPurchaseHistory: document.getElementById('showPurchaseHistory').classList.contains('active'),
+        shareBrowsingData: document.getElementById('shareBrowsingData').classList.contains('active'),
+        twoFactorAuth: document.getElementById('twoFactorAuth').classList.contains('active')
+      };
+
+      try {
+        const { error } = await supabase
+          .from('usuarios')
+          .update(updates)
+          .eq('id_usuario', usuarioActual.id);
+
+        if (error) throw error;
+
+        mostrarNotificacion('Configuración de privacidad guardada', 'success');
+      } catch (error) {
+        console.error('Error al guardar privacidad:', error);
+        mostrarNotificacion('Error al guardar configuración de privacidad', 'error');
+      }
+    }
+
+    async function guardarConfigApariencia() {
+      const theme = document.querySelector('.option-card.active[data-theme]').dataset.theme;
+      const accentColor = document.querySelector('.color-option.active').dataset.color;
+      
+      const config = {
+        theme: theme,
+        accentColor: accentColor,
+        fontSize: parseInt(document.getElementById('fontSizeSlider').value),
+        animations: document.getElementById('animations').classList.contains('active'),
+        showPricesWithTax: document.getElementById('showPricesWithTax').classList.contains('active')
+      };
+
+      localStorage.setItem('vapedealer_config_appearance', JSON.stringify(config));
+      mostrarNotificacion('Configuración de apariencia guardada', 'success');
+      
+      // Aplicar cambios inmediatamente
+      aplicarTema(theme, accentColor);
+    }
+
+    async function guardarConfigIdioma() {
+      const config = {
+        language: document.getElementById('interfaceLanguage').value,
+        timezone: document.getElementById('timezone').value,
+        dateFormat: document.getElementById('dateFormat').value,
+        timeFormat: document.getElementById('timeFormat').value
+      };
+
+      localStorage.setItem('vapedealer_config_language', JSON.stringify(config));
+      mostrarNotificacion('Configuración de idioma guardada', 'success');
+    }
+
+    async function guardarConfigAvanzada() {
+      const config = {
+        developerMode: document.getElementById('developerMode').classList.contains('active'),
+        preloadImages: document.getElementById('preloadImages').classList.contains('active'),
+        dataCompression: document.getElementById('dataCompression').classList.contains('active'),
+        rateLimit: parseInt(document.getElementById('rateLimitSlider').value)
+      };
+
+      localStorage.setItem('vapedealer_config_advanced', JSON.stringify(config));
+      mostrarNotificacion('Configuración avanzada guardada', 'success');
+    }
+
+    // Funciones de utilidad
+    function mostrarNotificacion(mensaje, tipo = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = mensaje;
+      notification.className = `notification ${tipo} show`;
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    function toggleSwitch(element) {
+      element.classList.toggle('active');
+    }
+
+    function updateFontSize(input) {
+      document.getElementById('fontSizeValue').textContent = input.value + '%';
+    }
+
+    function updateRateLimit(input) {
+      document.getElementById('rateLimitValue').textContent = input.value + '/min';
+    }
+
+    function selectTheme(card) {
+      document.querySelectorAll('.option-card').forEach(c => {
+        if (c.parentElement === card.parentElement) {
+          c.classList.remove('active');
+        }
+      });
+      card.classList.add('active');
+    }
+
+    function selectColor(colorDiv) {
+      document.querySelectorAll('.color-option').forEach(c => {
+        c.classList.remove('active');
+      });
+      colorDiv.classList.add('active');
+    }
+
+    function aplicarTema(tema, color) {
+      // Implementar lógica para cambiar tema dinámicamente
+      console.log('Aplicando tema:', tema, 'Color:', color);
+    }
+
+    // Funciones avanzadas
+    async function borrarHistorialNavegacion() {
+      if (confirm('¿Estás seguro de que deseas borrar todo tu historial de navegación?')) {
+        localStorage.removeItem('vapedealer_search_history');
+        localStorage.removeItem('vapedealer_viewed_products');
+        mostrarNotificacion('Historial de navegación borrado', 'success');
+      }
+    }
+
+    async function descargarMisDatos() {
+      try {
+        // Obtener datos del usuario
+        const { data: usuario, error: errorUsuario } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('id_usuario', usuarioActual.id)
+          .single();
+
+        // Obtener pedidos del usuario
+        const { data: pedidos, error: errorPedidos } = await supabase
+          .from('pedidos')
+          .select('*, detalle_pedidos(*)')
+          .eq('id_usuario', usuarioActual.id);
+
+        if (errorUsuario || errorPedidos) {
+          throw new Error('Error al obtener datos');
+        }
+
+        const datosUsuario = {
+          usuario: usuario,
+          pedidos: pedidos || [],
+          configuracion: {
+            general: JSON.parse(localStorage.getItem('vapedealer_config_general') || '{}'),
+            notifications: JSON.parse(localStorage.getItem('vapedealer_config_notifications') || '{}'),
+            appearance: JSON.parse(localStorage.getItem('vapedealer_config_appearance') || '{}'),
+            language: JSON.parse(localStorage.getItem('vapedealer_config_language') || '{}'),
+            advanced: JSON.parse(localStorage.getItem('vapedealer_config_advanced') || '{}')
+          },
+          exportDate: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(datosUsuario, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vapedealer_datos_${usuarioActual.id}_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        mostrarNotificacion('Datos descargados exitosamente', 'success');
+      } catch (error) {
+        console.error('Error al descargar datos:', error);
+        mostrarNotificacion('Error al descargar datos', 'error');
+      }
+    }
+
+    function exportarConfiguracion() {
+      const configuracionCompleta = {
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        configuracion: {
+          general: JSON.parse(localStorage.getItem('vapedealer_config_general') || '{}'),
+          notifications: JSON.parse(localStorage.getItem('vapedealer_config_notifications') || '{}'),
+          appearance: JSON.parse(localStorage.getItem('vapedealer_config_appearance') || '{}'),
+          language: JSON.parse(localStorage.getItem('vapedealer_config_language') || '{}'),
+          advanced: JSON.parse(localStorage.getItem('vapedealer_config_advanced') || '{}')
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(configuracionCompleta, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vapedealer_configuracion.json';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      mostrarNotificacion('Configuración exportada', 'success');
+    }
+
+    function importarConfiguracion() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const config = JSON.parse(e.target.result);
+              
+              if (config.configuracion) {
+                Object.keys(config.configuracion).forEach(key => {
+                  localStorage.setItem(`vapedealer_config_${key}`, JSON.stringify(config.configuracion[key]));
+                });
+                
+                cargarConfiguracionLocal();
+                mostrarNotificacion('Configuración importada exitosamente', 'success');
+              } else {
+                throw new Error('Formato de archivo inválido');
+              }
+            } catch (error) {
+              console.error('Error al importar configuración:', error);
+              mostrarNotificacion('Error al importar configuración', 'error');
+            }
+          };
+          reader.readAsText(file);
+        }
+      };
+      input.click();
+    }
+
+    function limpiarCache() {
+      if (confirm('¿Estás seguro de que deseas limpiar la caché?')) {
+        // Limpiar elementos específicos del localStorage
+        const keysToKeep = [
+          'vapedealer_config_general',
+          'vapedealer_config_notifications', 
+          'vapedealer_config_appearance',
+          'vapedealer_config_language',
+          'vapedealer_config_advanced',
+          'carrito'
+        ];
+        
+        Object.keys(localStorage).forEach(key => {
+          if (!keysToKeep.includes(key) && key.startsWith('vapedealer_')) {
+            localStorage.removeItem(key);
+          }
+        });
+        
+        mostrarNotificacion('Caché limpiada exitosamente', 'success');
+      }
+    }
+
+    function restaurarValoresPredeterminados() {
+      if (confirm('¿Restaurar toda la configuración a valores predeterminados? Esta acción no se puede deshacer.')) {
+        // Eliminar toda la configuración
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('vapedealer_config_')) {
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // Recargar la página
+        location.reload();
+      }
+    }
+
+    // Funcionalidad del menú lateral (mantenida del código original)
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    let menuState = { isOpen: false };
+
+    function openMenu() {
+      menuState.isOpen = true;
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('open');
+      menuToggle.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      menuState.isOpen = false;
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      menuToggle.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuToggle.addEventListener('click', () => {
+      menuState.isOpen ? closeMenu() : openMenu();
+    });
+
+    menuOverlay.addEventListener('click', closeMenu);
+
+    // Sistema de pestañas
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById(tabName).classList.add('active');
+      event.target.closest('.tab-button').classList.add('active');
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Inicializar interfaz
+    function inicializarInterfaz() {
+      // Animación de entrada
+      document.querySelectorAll('.section-card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.5s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    }
+  </script>
+</body>
+</html>
